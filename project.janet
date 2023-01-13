@@ -20,7 +20,7 @@
                 ))
 
 (task "docker:run" []
-      (os/shell "docker run -dp 3000:3000 dw-api"))
+      (os/shell "docker run -dp 31311:80 dw-api"))
 
 (declare-executable
   :name "serve"

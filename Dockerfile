@@ -36,4 +36,4 @@ COPY . .
 RUN jpm -l deps
 RUN jpm -l build
 CMD ["build/serve"]
-EXPOSE 3000
+EXPOSE 80

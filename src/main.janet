@@ -13,4 +13,4 @@
   :body (string/format template (json/encode npcs))})
 
 (defn main [&opt args]
-  (circlet/server handler 3000 "0.0.0.0"))
+  (circlet/server handler 80 "0.0.0.0"))
