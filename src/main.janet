@@ -1,16 +1,46 @@
 (import circlet)
 (import sqlite3 :as sql)
-(import spork/json :as json)
+(import spork/http :as http)
 
-(defn handler
- "A simple HTTP server"
+(import ./index :as index)
+
+(def head (file/open "assets/head.html"))
+(def template (file/read head :all))
+(file/close head)
+
+(defn params
+  "parses query string"
+  [next]
+  (fn [req]
+    (let [params (first (peg/match
+                          http/query-string-grammar
+                          (req :query-string)))]
+      (next (merge req {:params params})))))
+
+(defn render [view]
+  (string template
+          "<body>"
+          view
+          "</body>"
+          "</html>"))
+
+(defn default-handler
+  "A simple HTTP server"
   [request]
-  (def conn (sql/open "db/world.db"))
-  (def npcs (sql/eval conn `select * from flyable_npcs`))
-  (def template "<!doctype html><html><body><h1>%s</h1></body></html>")
- {:status 200
-  :headers {"Content-Type" "text/html"}
-  :body (string/format template (json/encode npcs))})
+    {:status 200
+     :headers {"Content-Type" "text/html"}
+     :body "nothin"})
+
+(def routes (circlet/router
+              {"/test" {:status 200
+                        :body (render index/search)}
+               "/fly" index/handle-search
+               "/css/main.css" {:kind :file :file "assets/css/main.css" :mime "text/css"}
+               "/js/htmx.js" {:kind :file :file "assets/htmx.min.js" :mime "application/javascript"}
+               :default default-handler}))
 
 (defn main [&opt args]
-  (circlet/server handler 8080 "0.0.0.0"))
+  (circlet/server (->
+                    routes
+                    params
+                    circlet/logger) 8080 "0.0.0.0"))

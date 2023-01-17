@@ -4,11 +4,14 @@
   :source ["src"]
   :dependencies [
                  "https://github.com/janet-lang/spork"
-                 "https://github.com/janet-lang/sqlite3"
+                 "https://github.com/jonesmelton/sqlite3"
                  "https://github.com/joy-framework/suresql"
                  "https://github.com/pyrmont/testament"
                  "https://github.com/janet-lang/circlet"
                  ])
+
+(task "dev" []
+      (os/shell "find src assets | entr -r janet src/main.janet"))
 
 (task "docker:build" []
       (os/shell `
@@ -21,6 +24,9 @@
 
 (task "docker:run" []
       (os/shell "docker run -dp 31311:80 dw-api"))
+
+(task "docker:shell" []
+      (os/shell "docker exec -it dw-api bash"))
 
 (declare-executable
   :name "serve"
