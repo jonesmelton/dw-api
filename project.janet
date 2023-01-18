@@ -4,11 +4,14 @@
   :source ["src"]
   :dependencies [
                  "https://github.com/janet-lang/spork"
+                 "https://github.com/jonesmelton/suresql"
                  "https://github.com/jonesmelton/sqlite3"
-                 "https://github.com/joy-framework/suresql"
                  "https://github.com/pyrmont/testament"
                  "https://github.com/janet-lang/circlet"
                  ])
+
+(task "format" []
+      (os/shell "./scripts/janet-format src/*.janet"))
 
 (task "dev" []
       (os/shell "find src assets | entr -r janet src/main.janet"))

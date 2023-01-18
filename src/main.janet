@@ -39,21 +39,28 @@
                "/js/htmx.js" {:kind :file :file "assets/htmx.min.js" :mime "application/javascript"}
                :default default-handler}))
 
-(defn dyn_mw
+(defn dyn-mw
   `circlet wipes dyns and suresql only sets fns as global dyns.
    ridiculous hack, consider PR to suresql to return locals also/instead`
   [next]
-  (sure/defqueries "db/fly.sql"
-                   {:connection (sql/open "db/world.db")})
+  (let [db (sql/open "db/world.db")
+        peg-g (dyn :peg-grammar)]
 
-  (def find-in-all ((dyn 'find-in-all) :value))
-  (def dyns {:context find-in-all})
-  (fn [req]
-    (next (merge req dyns))))
+    (def fns (sure/defqueries "db/connect.sql"
+                              {:connection db}))
+
+    ((fns :attach-quow))
+    ((fns :set-journal))
+    ((fns :set-safety))
+
+    (def dyns {:peg-grammar peg-g
+               :db db})
+    (fn [req]
+      (next (merge req dyns)))))
 
 (defn main [&opt args]
   (circlet/server (->
                     routes
-                    dyn_mw
+                    dyn-mw
                     params
                     circlet/logger) 8080 "0.0.0.0"))

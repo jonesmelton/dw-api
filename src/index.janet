@@ -17,14 +17,17 @@
      [:div {:id "search-results"}]]))
 
 (defn handle-search [req]
-  (def fi (req :context))
-  (let [params (req :params)
-        q (params "q")
-        npcs (fi {:term q})]
+  (with-dyns [:peg-grammar (req :peg-grammar)]
+    (def fns (sure/defqueries "db/fly.sql"
+                              {:connection (req :db)}))
 
-    {:status 200
-     :body
-     (html
-       [:table {}
-        [:tr [:th "short name"] [:th "location"] [:th "full name"]]
-        (map (fn [npc] [:tr [:td (npc :short_name)] [:td (npc :location)] [:td (npc :full_name)]]) npcs)])}))
+    (let [params (req :params)
+          q (params "q")
+          npcs ((fns :find-in-all) {:term q})]
+
+      {:status 200
+       :body
+       (html
+         [:table {}
+          [:tr [:th "short name"] [:th "location"] [:th "full name"]]
+          (map (fn [npc] [:tr [:td (npc :short_name)] [:td (npc :location)] [:td (npc :full_name)]]) npcs)])})))
