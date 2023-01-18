@@ -1,7 +1,7 @@
 (import circlet)
 (import sqlite3 :as sql)
 (import spork/http :as http)
-
+(import suresql :as sure)
 (import ./index :as index)
 
 (def head (file/open "assets/head.html"))
@@ -39,8 +39,21 @@
                "/js/htmx.js" {:kind :file :file "assets/htmx.min.js" :mime "application/javascript"}
                :default default-handler}))
 
+(defn dyn_mw
+  `circlet wipes dyns and suresql only sets fns as global dyns.
+   ridiculous hack, consider PR to suresql to return locals also/instead`
+  [next]
+  (sure/defqueries "db/fly.sql"
+                   {:connection (sql/open "db/world.db")})
+
+  (def find-in-all ((dyn 'find-in-all) :value))
+  (def dyns {:context find-in-all})
+  (fn [req]
+    (next (merge req dyns))))
+
 (defn main [&opt args]
   (circlet/server (->
                     routes
+                    dyn_mw
                     params
                     circlet/logger) 8080 "0.0.0.0"))

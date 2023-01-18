@@ -2,8 +2,6 @@
 (import suresql :as sure)
 (import sqlite3 :as sql)
 
-(sure/defqueries "db/fly.sql"
-                 {:connection (sql/open "db/world.db")})
 
 (def search
   (html
@@ -19,9 +17,10 @@
      [:div {:id "search-results"}]]))
 
 (defn handle-search [req]
+  (def fi (req :context))
   (let [params (req :params)
         q (params "q")
-        npcs (find-in-all {:term q})]
+        npcs (fi {:term q})]
 
     {:status 200
      :body
