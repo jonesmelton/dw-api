@@ -16,6 +16,12 @@
 (task "dev" []
       (os/shell "find src public | entr -r janet src/main.janet"))
 
+(task "repl:start" []
+      (os/shell "scripts/janet-netrepl src/main.janet"))
+
+(task "repl:connect" []
+      (os/shell "scripts/janet-netrepl -c"))
+
 (task "docker:build" []
       (os/shell `
     docker build \

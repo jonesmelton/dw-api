@@ -1,4 +1,3 @@
-(import spork/htmlgen :prefix "")
 (import suresql :as sure)
 
 (defn search-bar [request]
