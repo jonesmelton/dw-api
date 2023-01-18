@@ -1,1 +1,82 @@
+body div {
+    margin: 5% 10%;
+}
 
+table {
+    border-collapse: collapse;
+}
+
+th {
+    padding: 2rem 0.6rem;
+    text-align: left;
+}
+
+td {
+    padding: 0.6rem;
+    padding-right: 1.5rem;
+    font-family: var(--sans);
+}
+
+tr + tr {
+    border-top: 1px solid #cccccc;
+}
+
+tr td:first-child {
+    font-family: var(--sans);
+}
+
+.search-bar {
+    max-width: 80%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-bar p {
+    font-size: 2rem;
+    margin-right: 2rem;
+}
+
+.search-bar input {
+    height: 2rem;
+    font-size: 2rem;
+    max-width: 90%;
+}
+
+:root {
+    letter-spacing: 0.05em;
+    --sans:  -apple-system,
+             BlinkMacSystemFont,
+             avenir next,
+             avenir,
+             segoe ui,
+             helvetica neue,
+             helvetica, Cantarell,
+             Ubuntu,
+             roboto,
+             noto,
+             arial,
+             sans-serif;
+
+    --mono: Menlo,
+            Consolas,
+            Monaco,
+            Liberation Mono,
+            Lucida Console,
+            monospace;
+}
+
+body {
+    font-family: Iowan Old Style,
+                 Apple Garamond,
+                 Baskerville,
+                 Times New Roman,
+                 Droid Serif,
+                 Times,
+                 Source Serif Pro,
+                 serif,
+                 Apple Color Emoji,
+                 Segoe UI Emoji,
+                 Segoe UI Symbol;
+}

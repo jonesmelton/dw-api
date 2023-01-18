@@ -27,9 +27,9 @@
 (defn default-handler
   "A simple HTTP server"
   [request]
-    {:status 200
-     :headers {"Content-Type" "text/html"}
-     :body "nothin"})
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body "nothin"})
 
 (def routes (circlet/router
               {"/test" {:status 200
