@@ -1,66 +1,48 @@
-(import circlet)
+(use joy)
 (import sqlite3 :as sql)
-(import spork/http :as http)
 (import suresql :as sure)
-(import ./index :as index)
+(import ./fly)
 
-(def head (file/open "assets/head.html"))
-(def template (file/read head :all))
-(file/close head)
+(defn app-layout [{:body body :request request}]
+  (pp request)
+  (text/html
+    (doctype :html5)
+    [:html {:lang "en"}
+     [:head
+      [:title "joy-server"]
+      [:meta {:charset "utf-8"}]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
+      [:meta {:name "csrf-token" :content (csrf-token-value request)}]
+      [:link {:href "/css/main.css" :rel "stylesheet"}]
+      [:script {:src "/htmx.min.js" :defer ""}]]
+     [:body
+      body]]))
 
-(defn params
-  "parses query string"
-  [next]
-  (fn [req]
-    (let [params (first (peg/match
-                          http/query-string-grammar
-                          (req :query-string)))]
-      (next (merge req {:params params})))))
+(defroutes app-routes
+  [:get "/npcs" fly/search-bar]
+  [:get "/npcs/fly" fly/handle-search])
 
-(defn render [view]
-  (string template
-          "<body>"
-          view
-          "</body>"
-          "</html>"))
+(def app (-> (handler app-routes)
+             (layout app-layout)
+             (with-csrf-token)
+             (with-session)
+             (extra-methods)
+             (query-string)
+             (body-parser)
+             (json-body-parser)
+             (server-error)
+             (x-headers)
+             (static-files)
+             (not-found)
+             (logger)))
 
-(defn default-handler
-  "A simple HTTP server"
-  [request]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "nothin"})
+(defn main [& args]
+  (db/connect)
+  (def qfns (sure/defqueries "db/connect.sql"
+                             {:connection (dyn :db/connection)}))
+  ((qfns :attach-quow))
+  ((qfns :set-journal))
+  ((qfns :set-safety))
 
-(def routes (circlet/router
-              {"/test" {:status 200
-                        :body (render index/search)}
-               "/fly" index/handle-search
-               "/css/main.css" {:kind :file :file "assets/css/main.css" :mime "text/css"}
-               "/js/htmx.js" {:kind :file :file "assets/htmx.min.js" :mime "application/javascript"}
-               :default default-handler}))
-
-(defn dyn-mw
-  `circlet wipes dyns and suresql only sets fns as global dyns.
-   ridiculous hack, consider PR to suresql to return locals also/instead`
-  [next]
-  (let [db (sql/open "db/world.db")
-        peg-g (dyn :peg-grammar)]
-
-    (def fns (sure/defqueries "db/connect.sql"
-                              {:connection db}))
-
-    ((fns :attach-quow))
-    ((fns :set-journal))
-    ((fns :set-safety))
-
-    (def dyns {:peg-grammar peg-g
-               :db db})
-    (fn [req]
-      (next (merge req dyns)))))
-
-(defn main [&opt args]
-  (circlet/server (->
-                    routes
-                    dyn-mw
-                    params
-                    circlet/logger) 8080 "0.0.0.0"))
+  (server app 8080 "0.0.0.0")
+  (db/disconnect))
