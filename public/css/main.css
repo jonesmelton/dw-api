@@ -27,6 +27,10 @@ tr td:first-child {
     font-family: var(--sans);
 }
 
+.roominfo:hover {
+    background-color: yellow;
+}
+
 .search-bar {
     max-width: 80%;
     display: flex;
@@ -44,7 +48,6 @@ tr td:first-child {
 
 .search-bar p {
     font-size: 2rem;
-    margin-right: 2rem;
 }
 
 #search-results {

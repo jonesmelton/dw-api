@@ -4,11 +4,13 @@
   [:div
    [:div {:class "search-bar"}
     [:p "item search:"]
+    [:img {:class "htmx-indicator" :src "/images/puff.svg" :id "load-indicator"}]
     [:input {:type "text" :name "q"
              :hx-get "/items/search"
              :hx-trigger "keyup delay:80ms changed"
              :hx-target "#search-results"
              :hx-swap "innerHTML"
+             :hx-indicator "#load-indicator"
              :placeholder "item"}]]
    [:div {:id "search-results"}]])
 
@@ -35,7 +37,19 @@
 
       (map (fn [item] [:tr
                        [:td (item :item_name)]
-                       [:td (item :room_short)]
+                       [:td {:class "roominfo"
+                             :hx-get (string "/rooms/" (item :room_id))
+                             :hx-trigger "click"}
+                        (item :room_short)]
                        [:td (item :display_name)]
                        [:td (item :domain)]])
            items)]]))
+
+(defn maps-by-id [request]
+  (def qfns (sure/defqueries "db/maps.sql"
+                             {:connection (dyn :db/connection)}))
+  (let [id (get-in request [:params :id])]
+    (def room ((qfns :find-room) {:id id}))
+    (pp room)
+    [:div (string ;(kvs room))]
+    ))

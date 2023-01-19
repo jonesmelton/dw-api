@@ -21,7 +21,8 @@
                [:get "/npcs" fly/search-bar]
                [:get "/npcs/fly" fly/handle-search]
                [:get "/items" items/search-bar]
-               [:get "/items/search" items/handle-search])
+               [:get "/items/search" items/handle-search]
+               [:get "/rooms/:id" items/maps-by-id])
 
 (def app (-> (joy/handler app-routes)
              (joy/layout app-layout)
