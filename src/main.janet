@@ -46,14 +46,5 @@
   ((qfns :set-journal))
   ((qfns :set-safety))
 
-  (when joy/development?
-    (let [nrepl (require "spork/netrepl")
-          server ((nrepl 'server) :value)
-          host ((nrepl 'default-host) :value)
-          port ((nrepl 'default-port) :value)]
-      (setdyn :pretty-format "%.20Q")
-      (setdyn :debug true)
-      (server host port (merge-into (curenv) debugger-env))))
-
   (joy/server app 8080 "0.0.0.0")
   (joy/db/disconnect))
