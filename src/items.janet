@@ -15,8 +15,15 @@
 (defn handle-search [request]
   (def qfns (sure/defqueries "db/items.sql"
                              {:connection (dyn :db/connection)}))
+
   (let [q (get-in request [:query-string :q])
         items ((qfns :find-gatherable) {:term q})]
+
     [:table {}
-     [:tr [:th "item"]]
-     (map (fn [item] [:tr [:td (item :item_name)]]) items)]))
+     [:tr [:th "item"] [:th "room"] [:th "map"] [:th "area"]]
+     (map (fn [item] [:tr
+                      [:td (item :item_name)]
+                      [:td (item :room_short)]
+                      [:td (item :display_name)]
+                      [:td (item :domain)]])
+          items)]))
