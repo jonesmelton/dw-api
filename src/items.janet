@@ -18,7 +18,17 @@
 
   (let [q (get-in request [:query-string :q])
         items ((qfns :find-gatherable) {:term q})]
+    (def counts (->> items
+                    (reduce
+                      (fn [acc el]
+                        (put acc (string/ascii-lower (el :domain))
+                             (el :area_count))) @{})
+                    (pairs)
+                    (sorted-by (fn [[area _]] area))))
 
+    [:div
+    [:div {:class "location-counts"}
+     (map (fn [[area count]] [:div [:p area] [:p count]]) counts)]
     [:table {}
      [:tr [:th "item"] [:th "room"] [:th "map"] [:th "area"]]
      (map (fn [item] [:tr
@@ -26,4 +36,4 @@
                       [:td (item :room_short)]
                       [:td (item :display_name)]
                       [:td (item :domain)]])
-          items)]))
+          items)]]))

@@ -1,4 +1,4 @@
-body div {
+body > div {
     margin: 5% 10%;
 }
 
@@ -33,6 +33,13 @@ tr td:first-child {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+    margin-bottom: 0;
+}
+
+.search-bar input {
+    height: 2rem;
+    font-size: 2rem;
+    max-width: 90%;
 }
 
 .search-bar p {
@@ -40,10 +47,37 @@ tr td:first-child {
     margin-right: 2rem;
 }
 
-.search-bar input {
-    height: 2rem;
-    font-size: 2rem;
-    max-width: 90%;
+#search-results {
+    margin 0 0;
+}
+
+#search-results > div {
+    margin: 0 0;
+}
+
+.location-counts {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    width: 60%;
+    margin: 0.4rem 2rem;
+}
+
+.location-counts > div {
+    flex: 3 2 2;
+    flex-basis: 40px;
+    margin: 0.8rem 0.8rem;
+    padding: 0.2rem;
+    border: 1px solid black;
+}
+
+.location-counts p {
+    padding: 0.1rem 0.5rem;
+    margin: 0.1rem;
+    text-align: center;
+    font-size: 0.8rem;
 }
 
 :root {

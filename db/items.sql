@@ -4,16 +4,18 @@
         , r.room_short
         , m.display_name
         , m.domain
+        , count(*)
+          over (partition by domain)
+          as area_count
      from rooms r
 left join shop_items i
-       on i.room_id = r.room_id
+    using (room_id)
 left join maps m
-       on r.map_id = m.map_id
+    using (map_id)
     where sale_price is 'gather'
       and i.item_name
-          like '%' || :term || '%'
- order by i.item_name, domain
- ;
+          like '%'|| :term ||'%'
+ order by i.item_name, domain;
 
 -- name: create-index-gatherable-items
 create index
