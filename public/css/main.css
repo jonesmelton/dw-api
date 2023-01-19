@@ -66,15 +66,15 @@ tr td:first-child {
 }
 
 .location-counts > div {
-    flex: 3 2 2;
-    flex-basis: 40px;
+    flex: 1 1 0;
+    width: 60px;
     margin: 0.8rem 0.8rem;
     padding: 0.2rem;
     border: 1px solid black;
 }
 
 .location-counts p {
-    padding: 0.1rem 0.5rem;
+
     margin: 0.1rem;
     text-align: center;
     font-size: 0.8rem;
