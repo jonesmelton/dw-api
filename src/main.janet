@@ -1,7 +1,7 @@
 (import joy)
-(import sqlite3 :as sql)
 (import suresql :as sure)
 (import ./fly)
+(import ./items)
 
 (defn app-layout [{:body body :request request}]
   (joy/text/html
@@ -19,7 +19,9 @@
 
 (joy/defroutes app-routes
                [:get "/npcs" fly/search-bar]
-               [:get "/npcs/fly" fly/handle-search])
+               [:get "/npcs/fly" fly/handle-search]
+               [:get "/items" items/search-bar]
+               [:get "/items/search" items/handle-search])
 
 (def app (-> (joy/handler app-routes)
              (joy/layout app-layout)
@@ -33,7 +35,6 @@
              (joy/x-headers)
              (joy/static-files)
              (joy/not-found)
-             (joy/server-error)
              (joy/logger)))
 
 (defn main [& args]
@@ -43,5 +44,6 @@
   ((qfns :attach-quow))
   ((qfns :set-journal))
   ((qfns :set-safety))
+
   (joy/server app 8080 "0.0.0.0")
   (joy/db/disconnect))
