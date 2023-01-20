@@ -1,63 +1,73 @@
-(import joy/html :as html)
 (import suresql :as sure)
+
+(defn search-field [request]
+  [:div {:id "page-container"}
+   [:div {:id "search-container"}
+
+    [:div {:class "search-bar"}
+
+     [:label {:for "q"} "item search:"
+      [:img {:class "htmx-indicator" :id "load-indicator"
+             :height "40px" :width "40px"
+             :src "/images/puff.svg"}]]
+
+     [:input {:type "text" :name "q"
+              :id "search-input"
+              :hx-get "/items/search" :hx-swap "outerHTML"
+              :hx-trigger "keyup delay:80ms changed"
+              :hx-select "#search-results"
+              :hx-target "#search-results"
+              :hx-select-oob "#location-counts"
+              :hx-indicator "#load-indicator"
+              :placeholder "item"}]
+     [:div {:id "location-counts"}]]
+
+    [:div {:id "map-container"} [:img {:src "#" :width 500 :height 500}]]]
+
+   [:div {:id "search-results"}]])
 
 (defn search [request]
   (def qfns (sure/defqueries "src/sql/items.sql"
                              {:connection (dyn :db/connection)}))
 
-  (def q (get-in request [:query-string :q] ""))
-  (def items ((qfns :find-gatherable) {:term q}))
-  (def counts (->> items
-                   (reduce
-                     (fn [acc el]
-                       (put acc (string/ascii-lower (el :domain))
-                            (el :area_count))) @{})
-                   (pairs)
-                   (sorted-by (fn [[area _]] area))))
+  (let [q (get-in request [:query-string :q] "")
+        items ((qfns :find-gatherable) {:term q})
+        counts (->> items
+                    (reduce
+                      (fn [acc el]
+                        (put acc (string/ascii-lower (el :domain))
+                             (el :area_count))) @{})
+                    (pairs)
+                    (sorted-by (fn [[area _]] area)))]
 
-  [:div {:id "page-container"}
-   [:div {:id "search-container"}
-    [:div {:id "area-results"}
-     [:div {:class "location-counts"}
-      (when q
-        (map (fn [[area count]] [:div [:p area] [:p count]]) counts))]
+    (def location-count-results [:div {:id "location-counts"}
+                                 (map (fn [[area count]]
+                                        [:div [:p area] [:p count]])
+                                      counts)])
 
-     [:div {:id "map-container"} [:div]]]
-
-    [:div {:class "search-bar"}
-     [:label {:for "q"} "item search:"]
-
-     [:input {:type "text" :name "q"
-              :id "search-input" :value (or q "")
-              :hx-get "/items/search" :hx-swap "outerHTML"
-              :hx-trigger "keyup delay:80ms changed"
-              :hx-target "#page-container"
-              :hx-indicator "#load-indicator"
-              :placeholder " item"}]
-     [:div {:id "load-indicator"}
-      [:img {:class "htmx-indicator" :src "/images/puff.svg"}]]]]
-
-   (when q [:div {:id "search-results"}
-            [:table {}
-             [:tr [:th "item"] [:th "room"] [:th "map"] [:th "area"]]
-             (map (fn [item] [:tr
-                              [:td (item :item_name)]
-                              [:td {:class "roominfo"
-                                    :hx-get (string "/rooms/" (item :room_id))
-                                    :hx-trigger "click" :hx-swap "outerHTML"
-                                    :hx-target "#map-container"}
-                               (item :room_short)]
-                              [:td (item :display_name)]
-                              [:td (item :domain)]])
-                  items)]])])
+    (def item-search-results [:div {:id "search-results"}
+                              [:table {}
+                               [:tr [:th "item"] [:th "room"] [:th "map"] [:th "area"]]
+                               (map (fn [item] [:tr
+                                                [:td (item :item_name)]
+                                                [:td {:class "roominfo" :id (item :room_id)
+                                                      :hx-get (string "/rooms/" (item :room_id))
+                                                      :hx-trigger "click" :hx-swap "none"
+                                                      :hx-filter "#map-container"
+                                                      :hx-select-oob "#map-container"
+                                                      }
+                                                 (item :room_short)]
+                                                [:td (item :display_name)]
+                                                [:td (item :domain)]])
+                                    items)]])
+    [location-count-results item-search-results]))
 
 (defn maps-by-id [request]
-  #(html/raw `<div style="background-color:blue;"></div>`)])
   (defn offset-style [x-pos y-pos]
     `calculates position based on offset\
    then returns the styles for the image`
-    (let [x (+ (- x-pos) 200)
-          y (+ (- y-pos) 200)]
+    (let [x (+ (- x-pos) 250)
+          y (+ (- y-pos) 250)]
       (string/format `object-fit: none;
                       object-position: %dpx %dpx;`
                      x y)))
@@ -75,13 +85,12 @@
         url (string "/maps/" filename)
         style (offset-style x y)]
 
-    (print style)
-    (pp room)
     [:div {:id "map-container"}
      [:figure
+        [:span {:id "heredot"}]
       [:figcaption
        [:p {:id "room-short"} desc]
        [:p {:id "map-name"} name]]
       [:img {:src url :alt name
-             :height 400 :width 400
+             :height 500 :width 500
              :style style}]]]))

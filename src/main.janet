@@ -20,7 +20,7 @@
 (joy/defroutes app-routes
                [:get "/npcs" fly/search-bar]
                [:get "/npcs/fly" fly/handle-search]
-               [:get "/items" items/search]
+               [:get "/items" items/search-field]
                [:get "/items/search" items/search]
                [:get "/rooms/:id" items/maps-by-id])
 
