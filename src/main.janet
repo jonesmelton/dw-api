@@ -13,15 +13,15 @@
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
       [:meta {:name "csrf-token" :content (joy/csrf-token-value request)}]
       [:link {:href "/css/main.css" :rel "stylesheet"}]
-      [:script {:src "/htmx.min.js" :defer ""}]]
-     [:body
-      body]]))
+      [:script {:src "/js/htmx.min.js" :defer ""}]
+      [:script {:src "/js/app.js" :defer ""}]]
+     [:body body]]))
 
 (joy/defroutes app-routes
                [:get "/npcs" fly/search-bar]
                [:get "/npcs/fly" fly/handle-search]
-               [:get "/items" items/search-bar]
-               [:get "/items/search" items/handle-search]
+               [:get "/items" items/search]
+               [:get "/items/search" items/search]
                [:get "/rooms/:id" items/maps-by-id])
 
 (def app (-> (joy/handler app-routes)
