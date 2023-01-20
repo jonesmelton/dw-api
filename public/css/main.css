@@ -36,15 +36,27 @@ tr td:first-child {
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
-    align-items: stretch;
-    width: 50%;
+    align-items: space-between;
+    width: 100%;
+}
+
+#area-results {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    flex: 1 1 0;
+    padding-bottom: 5%;
+}
+
+#area-results > div {
+    margin: 0 -3%;
 }
 
 .search-bar {
     flex: 2 2 0;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
+    justify-content: left;
     margin-bottom: 4rem;
 }
 
@@ -58,7 +70,7 @@ input::placeholder {
     font-size: 2rem;
     padding: 0.4rem 0.6rem;
     margin: 0.5rem;
-    flex: 2 2 0;
+    flex: 0 2 auto;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0 , .3);
     border: 0;
     outline: 0;
@@ -69,26 +81,25 @@ input::placeholder {
     font-size: 2rem;
     margin: 0.6rem;
     padding: 0.3rem 0.6rem;
-    flex: 2 2 0;
+    flex: 0 2 auto;
 }
 
 .location-counts {
-    flex: 2 2 0;
+    flex: 1 1 0;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
-    align-items: stretch;
-    align-content: space-between;
+    justify-content: space-around;
+    align-items: start;
+    align-content: space-around;
     min-height: 150px;
-    margin-bottom: 2rem;
+    padding: 2% 10%;
 }
 
 .location-counts > div {
     flex: 2 2 0;
-    margin: 0.6rem;
+    margin: 0.6rem 4rem 0.6rem 0rem;
     padding: 0.2rem 0.6rem;
     max-width: 70px;
-    border: 1px solid black;
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-around;
@@ -106,12 +117,50 @@ input::placeholder {
 }
 
 #load-indicator {
-    flex: 2 2 0;
-    justify-self: end;
+    flex: 0 1 auto;
 }
 
-#load-indicator {
-    justify-self: end;
+#map-container {
+    flex: 0 1 auto;
+    margin-right: 0;
+}
+
+#map-container > figure {
+    margin: 0 0 0 2rem;
+    padding-top: 3rem;
+}
+
+figure > img {
+    opacity: 0.8;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0 , .3);
+    border: 0;
+    border-radius: 4px;
+    outline: 0;
+}
+
+figcaption {
+    position: relative;
+    text-align: end;
+    margin-bottom: 1rem;
+    margin-top: -4rem;
+}
+
+figcaption > p {
+    margin: 0.4rem;
+}
+
+#map-name {
+    font-variant-caps: small-caps;
+    font-size: 1.4rem;
+}
+
+#room-short {
+    font-size: 0.8rem;
+}
+
+#map-container > div {
+    width: 440px;
+    height: 440px;
 }
 
 #search-results {
