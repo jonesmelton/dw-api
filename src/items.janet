@@ -1,7 +1,7 @@
 (import suresql :as sure)
 
 (defn search [request]
-  (def qfns (sure/defqueries "db/items.sql"
+  (def qfns (sure/defqueries "src/sql/items.sql"
                              {:connection (dyn :db/connection)}))
 
   (def q (get-in request [:query-string :q] ""))
@@ -45,7 +45,7 @@
                   items)]])])
 
 (defn maps-by-id [request]
-  (def qfns (sure/defqueries "db/maps.sql"
+  (def qfns (sure/defqueries "src/sql/maps.sql"
                              {:connection (dyn :db/connection)}))
   (let [id (get-in request [:params :id])]
     (def room ((qfns :find-room) {:id id}))

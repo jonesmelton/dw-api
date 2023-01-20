@@ -40,7 +40,7 @@
 
 (defn main [& args]
   (joy/db/connect)
-  (def qfns (sure/defqueries "db/connect.sql"
+  (def qfns (sure/defqueries "src/sql/connect.sql"
                              {:connection (dyn :db/connection)}))
   ((qfns :attach-quow))
   ((qfns :set-journal))

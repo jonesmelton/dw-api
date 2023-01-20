@@ -13,7 +13,7 @@
    [:div {:id "search-results"}]])
 
 (defn handle-search [req]
-  (def qfns (sure/defqueries "db/fly.sql"
+  (def qfns (sure/defqueries "src/sql/fly.sql"
                              {:connection (dyn :db/connection)}))
   (let [q (get-in req [:query-string :q] nil)
         finder (qfns :find-in-all)]
