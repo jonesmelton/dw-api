@@ -22,9 +22,8 @@
 (defn index [request]
   [:div {:id "page-container"} [:h1 "witch stuff"]
    [:ul
-   [:li [:a {:href "/items"} [:h2 "gatherable item search"]]]
-   [:li [:a {:href "/npcs"} [:h2 "flyable npc search"]]]
-  ]])
+    [:li [:a {:href "/items"} [:h2 "gatherable item search"]]]
+    [:li [:a {:href "/npcs"} [:h2 "flyable npc search"]]]]])
 
 (joy/defroutes app-routes
                [:get "/" index]

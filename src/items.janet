@@ -89,6 +89,6 @@
               :hx-indicator "#load-indicator"
               :placeholder "item"}]
      [:div {:id "location-counts"}]]
-     (maps-by-id {:params {:id "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"}})]
+    (maps-by-id {:params {:id "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"}})]
 
    [:div {:id "search-results"}]])

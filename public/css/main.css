@@ -82,6 +82,12 @@ tr td:first-child {
     font-family: var(--sans);
 }
 
+.highlight {
+    text-decoration-line: underline;
+    text-decoration-color: #A78BFA;
+    text-decoration-thickness: 2px;
+}
+
 .roominfo:hover {
     background-color: #FFF1F2;
 }
