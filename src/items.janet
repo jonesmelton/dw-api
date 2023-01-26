@@ -1,31 +1,5 @@
 (import suresql :as sure)
 
-(defn search-field [request]
-  [:div {:id "page-container"}
-   [:div {:id "search-container"}
-
-    [:div {:class "search-bar"}
-
-     [:label {:for "q"} "item search:"
-      [:img {:class "htmx-indicator" :id "load-indicator"
-             :height "40px" :width "40px"
-             :src "/images/puff.svg"}]]
-
-     [:input {:type "text" :name "q"
-              :id "search-input"
-              :hx-get "/items/search" :hx-swap "outerHTML"
-              :hx-trigger "keyup delay:80ms changed"
-              :hx-select "#search-results"
-              :hx-target "#search-results"
-              :hx-select-oob "#location-counts"
-              :hx-indicator "#load-indicator"
-              :placeholder "item"}]
-     [:div {:id "location-counts"}]]
-
-    [:div {:id "map-container"} [:img {:src "#" :width 500 :height 500}]]]
-
-   [:div {:id "search-results"}]])
-
 (defn search [request]
   (def qfns (sure/defqueries "src/sql/items.sql"
                              {:connection (dyn :db/connection)}))
@@ -54,8 +28,7 @@
                                                       :hx-get (string "/rooms/" (item :room_id))
                                                       :hx-trigger "click" :hx-swap "none"
                                                       :hx-filter "#map-container"
-                                                      :hx-select-oob "#map-container"
-                                                      }
+                                                      :hx-select-oob "#map-container"}
                                                  (item :room_short)]
                                                 [:td (item :display_name)]
                                                 [:td (item :domain)]])
@@ -87,10 +60,35 @@
 
     [:div {:id "map-container"}
      [:figure
-        [:span {:id "heredot"}]
+      [:span {:id "heredot"}]
       [:figcaption
        [:p {:id "room-short"} desc]
        [:p {:id "map-name"} name]]
       [:img {:src url :alt name
              :height 500 :width 500
              :style style}]]]))
+
+(defn search-field [request]
+  [:div {:id "page-container"}
+   [:div {:id "search-container"}
+
+    [:div {:class "search-bar"}
+
+     [:label {:for "q"} "gatherable item search"
+      [:img {:class "htmx-indicator" :id "load-indicator"
+             :height "40px" :width "40px"
+             :src "/images/puff.svg"}]]
+
+     [:input {:type "text" :name "q"
+              :id "search-input"
+              :hx-get "/items/search" :hx-swap "outerHTML"
+              :hx-trigger "keyup delay:80ms changed"
+              :hx-select "#search-results"
+              :hx-target "#search-results"
+              :hx-select-oob "#location-counts"
+              :hx-indicator "#load-indicator"
+              :placeholder "item"}]
+     [:div {:id "location-counts"}]]
+     (maps-by-id {:params {:id "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"}})]
+
+   [:div {:id "search-results"}]])

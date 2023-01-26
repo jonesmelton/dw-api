@@ -54,6 +54,7 @@ input[type=text] {
     font-size: 2rem;
     flex: 0 1 auto;
     margin: 0.6rem;
+    text-align: center;
 }
 
 table {
@@ -122,12 +123,12 @@ tr td:first-child {
 }
 
 #map-container > figure {
-    margin: 0 0 0 2rem;
-    padding-top: 3rem;
+    width: 500px;
+    height: 500px;
+    position: relative;
 }
 
 figure > img {
-    opacity: 0.8;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0 , .3);
     border: 0;
     border-radius: 4px;
@@ -135,10 +136,24 @@ figure > img {
 }
 
 figcaption {
-    position: relative;
+    position: absolute;
     text-align: end;
-    margin-bottom: 1rem;
-    margin-top: -4rem;
+    right: 0;
+    top: 0;
+    background-image: linear-gradient(
+    to bottom,
+    rgba(254, 254, 254, 1),
+    rgba(249, 250, 251, 0.96) 60%,
+    rgba(243, 244, 246, 0.91)
+    );
+}
+
+#heredot {
+    position: absolute;
+    left: calc(50% - 3px);
+    top: calc(50% - 3px);
+    border: 4px solid red;
+    border-radius: 50%;
 }
 
 figcaption > p {
@@ -157,6 +172,18 @@ figcaption > p {
 #map-container > div {
     width: 500px;
     height: 500px;
+}
+
+#npc-search-results {
+    flex: 0 1 auto;
+    padding-top: 2rem;
+    margin-top: 2rem;
+}
+
+#npc-search-input {
+    flex 0 1 auto;
+    margin: 2rem;
+    padding: 2rem;
 }
 
 #search-results {

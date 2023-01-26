@@ -1,16 +1,21 @@
 (import suresql :as sure)
 
 (defn search-bar [request]
-  [:div
+  [:div {:id "page-container"}
+   [:div {:id "search-container"}
    [:div {:class "search-bar"}
-    [:p "flyable npc search:"]
-    [:input {:type "text" :name "q"
-             :hx-get "/npcs/fly"
-             :hx-trigger "keyup delay:80ms changed"
-             :hx-target "#search-results"
-             :hx-swap "innerHTML"
-             :placeholder "npc"}]]
-   [:div {:id "search-results"}]])
+    [:img {:class "htmx-indicator" :id "load-indicator"
+             :height "40px" :width "40px"
+             :src "/images/puff.svg"}]
+    [:label {:for "q"} "flyable npc search"]
+     [:input {:type "text" :name "q"
+              :hx-get "/npcs/fly"
+              :hx-trigger "keyup delay:80ms changed"
+              :hx-select "#npc-search-results"
+              :hx-target "#npc-search-results"
+              :hx-swap "outerHTML"
+              :placeholder "npc"}]]]
+   [:div {:id "npc-search-results"}]])
 
 (defn handle-search [req]
   (def qfns (sure/defqueries "src/sql/fly.sql"
@@ -18,6 +23,7 @@
   (let [q (get-in req [:query-string :q] nil)
         finder (qfns :find-in-all)]
     (def npcs (or (finder {:term q}) []))
-    [:table {}
-     [:tr [:th "short name"] [:th "location"] [:th "full name"]]
-     (map (fn [npc] [:tr [:td (npc :short_name)] [:td (npc :location)] [:td (npc :full_name)]]) npcs)]))
+    [:div {:id "npc-search-results"}
+     [:table {}
+      [:tr [:th "short name"] [:th "location"] [:th "full name"]]
+      (map (fn [npc] [:tr [:td (npc :short_name)] [:td (npc :location)] [:td (npc :full_name)]]) npcs)]]))
