@@ -8,7 +8,7 @@
     (joy/doctype :html5)
     [:html {:lang "en"}
      [:head
-      [:title "joy-server"]
+      [:title "witch utils"]
       [:meta {:charset "utf-8"}]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
       [:meta {:name "csrf-token" :content (joy/csrf-token-value request)}]

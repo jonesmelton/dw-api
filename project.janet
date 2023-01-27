@@ -32,7 +32,7 @@
                 ))
 
 (task "docker:run" []
-      (os/shell "docker run -dp 31311:80 dw-api"))
+      (os/shell "docker run -dp 31311:8080 dw-api"))
 
 (task "docker:shell" []
       (os/shell "docker exec -it dw-api bash"))
