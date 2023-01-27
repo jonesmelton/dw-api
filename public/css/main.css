@@ -61,6 +61,30 @@ table {
     border-collapse: collapse;
 }
 
+#npc-table {
+    table-layout: fixed;
+}
+
+#npc-table thead th:nth-child(1) {
+  width: 20%;
+}
+
+#npc-table thead th:nth-child(2) {
+  width: 40%;
+}
+
+#npc-table thead th:nth-child(3) {
+  width: 40%;
+}
+
+#npc-table th {
+    padding: 20px
+}
+
+#npc-table td {
+    padding: 20px;
+}
+
 th {
     padding: 1.1rem 0.6rem;
     font-variant: small-caps;
@@ -195,6 +219,14 @@ figcaption > p {
 #search-results {
     width: 90%;
     margin-top: 2rem;
+}
+
+#location-counts > .npc-area:hover {
+    box-shadow: 0 6px 14px 2px rgba(139, 92, 246, .6);
+}
+
+#location-counts > .npc-area.selected {
+    background-color: #DDD6FE;
 }
 
 :root {

@@ -13,6 +13,7 @@
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
       [:meta {:name "csrf-token" :content (joy/csrf-token-value request)}]
       [:link {:href "/css/main.css" :rel "stylesheet"}]
+      [:script {:src "/js/hyperscript.js" :defer ""}]
       [:script {:src "/js/htmx.min.js" :defer ""}]
       [:script {:src "/js/app.js" :defer ""}]]
      [:body body]]))
@@ -48,6 +49,7 @@
              (joy/logger)))
 
 (defn main [& args]
+  (setdyn :pretty-format "%.4Q")
   (joy/db/connect)
   (def qfns (sure/defqueries "src/sql/connect.sql"
                              {:connection (dyn :db/connection)}))
