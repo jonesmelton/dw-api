@@ -22,13 +22,14 @@
     (def item-search-results [:div {:id "search-results"}
                               [:table {}
                                [:tr [:th "item"] [:th "room"] [:th "map"] [:th "area"]]
-                               (map (fn [item] [:tr
+                               (map (fn [item] [:tr {:class "item-loc-result"}
                                                 [:td (item :item_name)]
                                                 [:td {:class "roominfo" :id (item :room_id)
                                                       :hx-get (string "/rooms/" (item :room_id))
                                                       :hx-trigger "click" :hx-swap "none"
                                                       :hx-filter "#map-container"
-                                                      :hx-select-oob "#map-container"}
+                                                      :hx-select-oob "#map-container"
+                                                      :_ "on click remove .selected from .item-loc-result then toggle .selected on closest <tr/>"}
                                                  (item :room_short)]
                                                 [:td (item :display_name)]
                                                 [:td (item :domain)]])

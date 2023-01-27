@@ -53,9 +53,10 @@
     [:div {:id "npc-search-results"}
      [:div {:id "npc-locations"} (areas)]
      [:table {:id "npc-table"}
-      [:thead [:tr [:th "short name"] [:th "location"] [:th "full name"]]]
+      [:thead [:tr [:th "short name"] [:th "area"] [:th "location"] [:th "full name"]]]
       (map (fn [npc] [:tr
                       [:td (joy/raw (npc :short_name))]
+                      [:td (npc :area)]
                       [:td (joy/raw (npc :location))]
                       [:td (joy/raw (npc :full_name))]]) npcs)]]))
 

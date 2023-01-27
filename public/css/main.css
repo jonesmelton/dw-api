@@ -9,8 +9,8 @@
 #search-container {
     display: flex;
     flex: 0 1 auto;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
 }
 
 #load-indicator {
@@ -70,11 +70,15 @@ table {
 }
 
 #npc-table thead th:nth-child(2) {
-  width: 40%;
+  width: 10%;
 }
 
 #npc-table thead th:nth-child(3) {
-  width: 40%;
+  width: 30%;
+}
+
+#npc-table thead th:nth-child(4) {
+    width: 30%
 }
 
 #npc-table th {
@@ -102,6 +106,11 @@ tr + tr {
     border-top: 1px solid #cccccc;
 }
 
+tr.selected {
+
+    border: 2px solid #A78BFA;
+}
+
 tr td:first-child {
     font-family: var(--sans);
 }
@@ -113,7 +122,7 @@ tr td:first-child {
 }
 
 .roominfo:hover {
-    background-color: #FFF1F2;
+    background-color: #DDD6FE;
 }
 
 #location-counts {
