@@ -1,0 +1,11 @@
+:root {
+    --main-bg-color: fffff8;
+}
+
+html {
+    background-color: var(--main-bg-color);
+}
+
+body {
+    width: 80%;
+}
