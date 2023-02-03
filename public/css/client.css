@@ -2,16 +2,19 @@
     --main-bg-color: fffff8;
     --client-bg-color: #0f172a;
     --default-text-white: #F8FAFC;
-    --input-bg-color: #475569;
+    --input-bg-color: #94A3B8;
     font-size: 14px;
-    background-color: var(--main-bg-color);
-}
 
-html {
-    background-color: var(--main-bg-color);
+    --mono: Menlo,
+            Consolas,
+            Monaco,
+            "Liberation Mono",
+            "Lucida Console",
+            monospace;
 }
 
 #mudclient {
+    background-color: var(--main-bg-color);
     height: 100%;
     width: 100%;
 }
@@ -33,6 +36,7 @@ html {
 }
 
 #main-window > pre {
+    font-family: var(--mono);
     white-space: pre-line;
     line-height: 1.4;
     margin: 0;
@@ -56,7 +60,7 @@ html {
 
 #input-bar > * {
     font-size: 2rem;
-    font-family: monospace;
+    font-family: var(--mono);
     color: var(--default-text-white);
 }
 

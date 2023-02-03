@@ -23,7 +23,9 @@
           _="   on submit halt the event
               then set input to the value of #command-bar
               then js(input) window.mudc.postMessage(input) end
-              then set the value of #command-bar to ''"
+              then set the value of #command-bar to input
+              then focus() the #command-bar
+              then select() the #command-bar"
         >
         <input
             id="command-bar"
