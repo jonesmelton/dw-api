@@ -17,20 +17,23 @@
   <body>
     <div id="mudclient">
       <div id="main-window"><pre></pre></div>
-      <form
+      <div id="bottom-container">
+        <form
           id="input-bar"
           _="   on submit halt the event
               then set input to the value of #command-bar
               then js(input) window.mudc.postMessage(input) end
               then set the value of #command-bar to ''"
-      >
-          <input
-              id="command-bar"
-              name="command"
-              type="text"
-              placeholder="send to mud"
-          /><button>send</button>
+        >
+        <input
+            id="command-bar"
+            name="command"
+            type="text"
+            placeholder="send to mud"
+        />
+        <button>send</button>
       </form>
+      </div>
     </div>
   </body>
 </html>
