@@ -2,7 +2,9 @@
 import { t } from '@arrow-js/core';
 import Colors from 'ansicolor'
 
-type Msg = {type: string; value: string;}
+type MudData = "line" | "oob"
+type Msg = {type: MudData; value: string;}
+
 const mud_display = document.querySelector("#main-window > pre")
 const mud_container = document.querySelector("#main-window")
 
@@ -10,13 +12,14 @@ function receive(message: Msg) {
 
   switch (message.type) {
       case "line":
+        // to clean any missed oob chars, esp whatever runs on password prompt
+        const cleaned = message.value.replace("�", "")
         const colored = Colors.parse(message.value)
-        var insert = t`
-                    ${colored.spans.map(
+        var insert = t`${colored.spans.map(
                         span => t`<span style='${span.css}'>${span.text}</span>`
                     )}`
         break
-      case "goahead":
+      case "oob":
         var insert = t`<span> GA </span>`
         break
       default:

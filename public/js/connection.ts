@@ -8,13 +8,21 @@ const reader = new TextDecoder()
 
 mud.onopen = () => {
   console.log("connected")
+
+  self.onmessage = (ev: MessageEvent)=> {
+    mud.send(ev.data + "\n")
+  }
 }
 
 mud.onwill = option => {
   if (option === WST.TelnetOption.GMCP) {
       mud.do(WST.TelnetOption.GMCP);
-      mud.sendGMCP("Core.Hello", { client: "ws-telnet-client", version: "1.0.0" });
+      mud.sendGMCP("Core.Hello", { client: "ws-telnet-client/lore", version: "1.0.0" });
   }
+}
+
+mud.ongoahead = () => {
+  postMessage({type: "oob", value: "goahead"})
 }
 
 // Regular string data received.
