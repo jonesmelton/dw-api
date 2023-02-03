@@ -7,8 +7,9 @@ then set the value of #command-bar to ''
 
 (defn index [request]
   [:div {:id "mudclient"}
-   [:div {:id "main-window"}]
-   [:form {:_ submit}
+   [:div {:id "main-window"}
+    [:pre]]
+   [:form {:id "input-bar" :_ submit}
     [:input {:type "text" :name "command"
              :placeholder "send to mud"
              :id "command-bar"}]

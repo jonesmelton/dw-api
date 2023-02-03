@@ -19,14 +19,14 @@ const MSSP = 70
 const ZMP = 93 // http://discworld.starturtle.net/external/protocols/zmp.html
 const NEW_ENV = 39 // rfc 1572
 const GMCP = 201;
+const GA = 249;
 
 // const DONT = 254;
 // const WONT = 252;
 
-
-// const GA = 249;
 // const EOR = 239;
 
+const reader = new TextDecoder()
 const writer = new TextEncoder()
 
 function send(bytes) {
@@ -71,12 +71,27 @@ function sb_ttype() {
   send([IAC, SB, TTYPE, 0, 299, IAC, SE])
 }
 
-function parse_mud(uintarray) {
+function tee_chars(uintarray) {
+  const teed = uintarray.reduce((acc, ele) => {
+    if (ele > 31 && ele < 127) {
+      acc.text.push(ele)
+    } else if (ele === 9 || ele === 10 || ele === 13) {
+      acc.text.push(ele)
+    } else {
+      acc.oob.push(ele)
+    }
+    return acc
+  }, {text: [], oob: []})
+
+  return [new Uint8Array(teed.text), oob]
+}
+
+function telopt(uintarray) {
   const [esc, com, opt, ...rest] = uintarray
   // console.log(com, opt, rest, Date.now())
 
   if (esc !== IAC) // pass through to be shown to user
-    {return uintarray}
+  { return uintarray }
 
   if (com === DO) {
     switch (opt) {
@@ -119,8 +134,6 @@ function parse_mud(uintarray) {
   }
 }
 
-const reader = new TextDecoder()
-
 conn.onopen = event => {
   console.log("connect")
     onmessage = (event) => {
@@ -133,10 +146,15 @@ conn.onmessage = event => {
   // but since we already need the raw numbers,
   // might as well pass it this way.
   const view = new Uint8Array(event.data)
-  const text = reader.decode(parse_mud(view))
-  if (text !== "") {
-    postMessage(text)
+
+  const text = telopt(view)
+  const line = reader.decode(text)
+  if (line !== "") {
+    postMessage({type: "line", value: line})
   }
+  // if (oob?.[1] === GA) {
+  //   postMessage({type: "goahead", value: "none"})
+  // }
 }
 
 conn.onclose = event => {

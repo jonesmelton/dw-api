@@ -1,11 +1,35 @@
 :root {
     --main-bg-color: fffff8;
+    --client-bg-color: #0f172a;
+    --default-text-white: #F8FAFC;
 }
 
 html {
     background-color: var(--main-bg-color);
 }
 
-body {
+#mudclient {
+    height: 100%;
+    width: 100%;
+}
+
+#main-window {
+    color: var(--default-text-white);
+    background-color: var(--client-bg-color);
+    margin: 0.4rem;
+    padding: 1rem;
     width: 80%;
+    height: 85vh;
+    overflow: scroll;
+}
+
+#input-bar {
+    position: absolute;
+    bottom: 0;
+    padding: 1rem 0;
+    height: 2rem;
+}
+
+#command-bar {
+    height: 100%;
 }

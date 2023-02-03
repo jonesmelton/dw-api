@@ -20,7 +20,8 @@
       [:script {:src "/js/app.js" :defer ""}]
       (when (= (request :path) "/client")
         [[:link {:href "/css/client.css" :rel "stylesheet"}]
-         [:script {:href "/js/vendor/ansicolor.js" :type "module" :defer ""}]
+         [:script {:src "/js/vendor/ansicolor.js" :type "module" :defer ""}]
+         [:script {:src "https://cdn.skypack.dev/@arrow-js/core" :type "module" :defer ""}]
          [:script {:src "/js/client.js" :type "module" :defer ""}]])]
      [:body body]]))
 
