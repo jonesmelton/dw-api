@@ -1,9 +1,9 @@
 "use strict";
-import { t } from 'https://cdn.skypack.dev/@arrow-js/core';
-import Colors from '/js/vendor/ansicolor.js'
+import { t } from '@arrow-js/core';
+import Colors from 'ansicolor'
 
 if (window.Worker) {
-  const mudc = new Worker("/js/connection.js")
+  const mudc = new Worker(new URL('./connection.js', import.meta.url), {type: "module"})
   window.mudc = mudc
 
   const mud_display = document.querySelector("#main-window > pre")
