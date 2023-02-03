@@ -14,10 +14,15 @@ mud.onopen = () => {
   }
 }
 
+mud.ongmcp = (ns, data) => {
+  console.log("gmcp: ", ns, "data:\n ", data)
+}
+
 mud.onwill = option => {
   if (option === WST.TelnetOption.GMCP) {
-      mud.do(WST.TelnetOption.GMCP);
-      mud.sendGMCP("Core.Hello", { client: "ws-telnet-client/lore", version: "1.0.0" });
+    mud.do(WST.TelnetOption.GMCP);
+    mud.sendGMCP("Core.Hello", { client: "ws-telnet-client/lore", version: "1.0.0" });
+    mud.sendGMCP("core.supports.set", [ "char.login", "char.info", "char.vitals", "char.login", "room.info", "room.map", "room.writtenmap"])
   }
 }
 

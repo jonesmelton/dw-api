@@ -25,6 +25,7 @@ class WST {
             if (data instanceof ArrayBuffer) {
                 // Binary
                 const dv = new Uint8Array(data);
+                console.log("data: ", dv)
                 if (dv.byteLength >= 2) {
                     // IAC start
                     const command = dv[1];
@@ -111,7 +112,18 @@ class WST {
                                 // replace embedded oob
                                 if (ele === WST.TelnetNegotiation.IAC &&
                                     ind !== 0) {
-
+                                    if (dv[ind + 1] === WST.TelnetNegotiation.SB &&
+                                        dv[ind + 2] === WST.TelnetOption.GMCP) {
+                                        console.log("gmcp: ", ind)
+                                        let end = ind
+                                        for (let i = ind; dv[i] !== WST.TelnetNegotiation.SE; i++) {
+                                            if (i >= 1000) {break}
+                                            end = i
+                                        }
+                                        console.log("end: ", ind)
+                                        console.log("length: ", dv.length)
+                                        const gd = new Uint8Array(data, ind - 1, end - 1)
+                                    }
                                     // console.log("embedded oob:\nindex: ", ind, "char: ", ele, "opt: ", dv[ind + 1], "next: ", dv[ind + 2])
                                     if ( dv[ind + 1] === WST.TelnetNegotiation.WILL &&
                                         dv[ind + 2] === WST.TelnetOption.ECHO) {
