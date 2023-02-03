@@ -29,7 +29,7 @@ const GA = 249;
 const reader = new TextDecoder()
 const writer = new TextEncoder()
 
-function send(bytes) {
+function send(bytes: number[]) {
   const buf = new Uint8Array(bytes).buffer
   conn.send(buf)
 }
@@ -44,11 +44,12 @@ function do_gmcp() {
 }
 
 function sb_gmcp() {
-  const client = writer.encode(`core.hello { "client" : "TinTin++", "version" : "2.01.2" }`).buffer
-  const req = writer.encode(`core.supports.set [ "char.login", "char.info", "char.vitals", "char.login", "room.info", "room.map", "room.writtenmap" ]`).buffer
+  const client = writer.encode(`core.hello { "client" : "TinTin++", "version" : "2.01.2" }`)
+  const req = writer.encode(`core.supports.set [ "char.login", "char.info", "char.vitals", "char.login", "room.info", "room.map", "room.writtenmap" ]`)
 
-  conn.send([IAC, SB, GMCP, ...client, IAC, SE])
-  conn.send([IAC, SB, GMCP, ...req, IAC, SE])
+  const hello = [IAC, SB, GMCP, ...client, IAC, SE]
+  send(hello)
+  send([IAC, SB, GMCP, ...req, IAC, SE])
 }
 
 function sb_env() {
@@ -83,7 +84,7 @@ function tee_chars(uintarray) {
     return acc
   }, {text: [], oob: []})
 
-  return [new Uint8Array(teed.text), oob]
+  return [new Uint8Array(teed.text), teed.oob]
 }
 
 function telopt(uintarray) {

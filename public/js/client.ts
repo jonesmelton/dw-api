@@ -3,7 +3,7 @@ import { t } from '@arrow-js/core';
 import Colors from 'ansicolor'
 
 if (window.Worker) {
-  const mudc = new Worker(new URL('./connection.js', import.meta.url), {type: "module"})
+  const mudc = new Worker(new URL('./connection.ts', import.meta.url), {type: "module"})
   window.mudc = mudc
 
   const mud_display = document.querySelector("#main-window > pre")
