@@ -1,6 +1,12 @@
 "use strict";
 
 import WST from "./vendor/wst"
+import {TP} from "./telnet_parser"
+
+const parser = new TP([100, 45, 255, 250, 201])
+parser.parse()
+console.log(parser)
+
 const host = "ws://discworld.atuin.net:4243"
 const mud = new WST(host)
 
@@ -37,5 +43,5 @@ mud.onreceive = (ev) => {
 
 // Telnet event received.
 mud.ontelnet = (ev) => {
-    console.log(`[=TELNET EVENT=]\nCommand: ${ev.command}\nOption: ${ev.option}\nData?: ${ev.data}`);
+    //console.log(`[=TELNET EVENT=]\nCommand: ${ev.command}\nOption: ${ev.option}\nData?: ${ev.data}`);
 };

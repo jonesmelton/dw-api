@@ -25,7 +25,6 @@ class WST {
             if (data instanceof ArrayBuffer) {
                 // Binary
                 const dv = new Uint8Array(data);
-                console.log("data: ", dv)
                 if (dv.byteLength >= 2) {
                     // IAC start
                     const command = dv[1];
