@@ -3,8 +3,8 @@
 import WST from "./vendor/wst"
 import {TP} from "./telnet_parser"
 
-const parser = new TP([100, 45, 255, 250, 201])
-parser.parse()
+const parser = new TP()
+parser.parse([100, 45, 255, 250, 201])
 console.log(parser)
 
 const host = "ws://discworld.atuin.net:4243"

@@ -1,85 +1,80 @@
 import WST from "./vendor/wst"
 import * as StateMachine from "pastafarian"
 
+function errorHandler(error, prev, next /* ...params */) {
+  if (error.name === 'IllegalTransitionException') {
+    console.log(error.message, "prev: ", prev, "next: ", next);
+      console.log(Date.now())
+    // prev is fsm.current
+    // next is the transition attempted, eg. fsm.go(next, ...)
+    // params are any other parameters to fsm.go, eg. fsm.go(next, param1, param2 ...)
+  } else {
+      console.log(`err: ${error} while trans from ${prev} to ${next}`)
+    // error is whatever was thrown in the transition callback that caused the error
+    // prev, next and other arguments will be undefined
+  }
+}
+
 export class TP {
     cursor = 0;
-    accum: number[];
-    chunk: number[];
+    accum: number[] = [];
+    chunk: number[] = [];
     fsm: StateMachine;
-    constructor(chunk: number[]) {
-        this.accum = []
-        this.chunk = chunk
+    constructor() {
         const fsm = new StateMachine({
-            initial: "idle",
+            initial: "IDLE",
             states: {
-                "idle": "ready",
-                "ready": ["text", "COMMAND"],
-                "text": ["COMMAND", "idle"],
-                "COMMAND": ["GMCP"]
+                IDLE: ["START"],
+                START: ["TEXT", "DATA"],
+                TEXT: ["DATA", "START", "IDLE"],
+                DATA: ["START", "IDLE"]
             },
-            error: (err, prev, next) => {
-                console.error(`err: ${err} while trans from ${prev} to ${next}`)
-            }
+            error: errorHandler
         })
 
-        fsm.on("GMCP", (prev) => {
-            if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC &&
-                this.chunk[this.cursor + 1] === WST.TelnetNegotiation.SE) {
-                this.cursor + 2
-                this.fsm.go("ready")
-            } else {
-                for (let i = this.cursor; i < this.chunk.length; i++) {
-                    this.cursor++
-                    this.accum.push(this.chunk[i])
-                }
-                this.cursor++
-                this.fsm.go("ready")
-            }
-        })
-
-        fsm.on("ready", (_prev: string) => {
+        fsm.on("START", (_prev) => {
             if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
                 this.cursor++
-                this.fsm.go("COMMAND")
+                return this.fsm.go("DATA")
             } else {
-                this.fsm.go("text")
+                return this.fsm.go("TEXT")
             }
         })
 
-        fsm.on("COMMAND", (prev) => {
-            const {GMCP} = WST.TelnetOption
-            if (this.chunk[this.cursor] === WST.TelnetNegotiation.SB) {
-                this.cursor++
-                switch (this.chunk[this.cursor]) {
-                    case GMCP:
+        fsm.on("DATA", (_prev) => {
+            for (; this.cursor < this.chunk.length; this.cursor++) {
+                if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
                     this.cursor++
-                    this.fsm.go("GMCP")
+                    this.fsm.go("START")
                     break
+                } else {
+                    this.accum.push(this.chunk[this.cursor])
                 }
             }
+            return this.fsm.go("IDLE")
         })
 
-        fsm.on("text", (_prev: string) => {
-                for (let i = this.cursor; i < chunk.length; i++) {
-                    if (this.chunk[i] === WST.TelnetNegotiation.IAC) {
-                        this.cursor++
-                        this.fsm.go("COMMAND")
-                        return
-                    } else {
-                        this.accum.push(this.chunk[i])
-                    }
-                }
-            this.fsm.go("idle")
-        })
-
-        fsm.on("before:idle", (prev) => {
-            console.log("result: ", this.accum)
-        })
-
-        fsm.on("idle", (prev) => {
+        fsm.on("after:DATA", (_prev) => {
+            console.log("DATA result: ", this.accum)
             this.accum = []
-            this.chunk = []
-            this.cursor = 0
+        })
+
+        fsm.on("TEXT", (_prev) => {
+            for (; this.cursor < this.chunk.length; this.cursor++) {
+                if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
+                    this.cursor++
+                    this.fsm.go("DATA")
+                    break
+                } else {
+                    this.accum.push(this.chunk[this.cursor])
+                }
+            }
+            this.fsm.go("IDLE")
+        })
+
+        fsm.on("after:TEXT", (_prev) => {
+            console.log("TEXT result: ", this.accum)
+            this.accum = []
         })
 
         fsm.on("*", (prev, next) => {
@@ -88,7 +83,9 @@ export class TP {
 
         this.fsm = fsm
     }
-    parse(): void {
-        this.fsm.go("ready")
+    parse(chars: number[]): void {
+        this.cursor = 0
+        this.chunk = chars
+        this.fsm.go("START")
     }
 }
