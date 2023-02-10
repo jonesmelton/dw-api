@@ -105,40 +105,6 @@ class WST {
                             this.ondont(option);
                             break;
                         default:
-                            // added this
-                            dv.forEach((ele, ind) => {
-                                if (ele > 127) {console.log("stray oob: ", ele)}
-                                // replace embedded oob
-                                if (ele === WST.TelnetNegotiation.IAC &&
-                                    ind !== 0) {
-                                    if (dv[ind + 1] === WST.TelnetNegotiation.SB &&
-                                        dv[ind + 2] === WST.TelnetOption.GMCP) {
-                                        console.log("gmcp: ", ind)
-                                        let end = ind
-                                        for (let i = ind; dv[i] !== WST.TelnetNegotiation.SE; i++) {
-                                            if (i >= 1000) {break}
-                                            end = i
-                                        }
-                                        console.log("end: ", ind)
-                                        console.log("length: ", dv.length)
-                                        const gd = new Uint8Array(data, ind - 1, end - 1)
-                                    }
-                                    // console.log("embedded oob:\nindex: ", ind, "char: ", ele, "opt: ", dv[ind + 1], "next: ", dv[ind + 2])
-                                    if ( dv[ind + 1] === WST.TelnetNegotiation.WILL &&
-                                        dv[ind + 2] === WST.TelnetOption.ECHO) {
-                                        dv[ind] = 32
-                                        dv[ind + 1] = 32
-                                        dv[ind + 2] = 32
-                                        this.do(WST.TelnetOption.ECHO)
-                                    }
-
-                                    if (ele === WST.TelnetNegotiation.IAC &&
-                                        dv[ind + 1] === WST.TelnetNegotiation.GA) {
-                                        dv[ind] = 10 // newline
-                                        dv[ind + 1] = 62 // > literal
-                                        this.ongoahead()
-                                    }
-                                }})
                             this.onreceive(dv)
                             break;
                     }

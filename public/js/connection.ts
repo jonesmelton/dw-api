@@ -3,9 +3,12 @@
 import WST from "./vendor/wst"
 import {TP} from "./telnet_parser"
 
-const parser = new TP()
-parser.parse([100, 45, 255, 250, 201])
-console.log(parser)
+const parser = new TP(ln => {
+  console.log("line handler: ", ln)
+  postMessage(ln)
+})
+// parser.parse([100, 45, 255, 250, 201, 72, 73, 255, 240])
+// console.log(parser)
 
 const host = "ws://discworld.atuin.net:4243"
 const mud = new WST(host)
@@ -20,10 +23,6 @@ mud.onopen = () => {
   }
 }
 
-mud.ongmcp = (ns, data) => {
-  console.log("gmcp: ", ns, "data:\n ", data)
-}
-
 mud.onwill = option => {
   if (option === WST.TelnetOption.GMCP) {
     mud.do(WST.TelnetOption.GMCP);
@@ -32,13 +31,12 @@ mud.onwill = option => {
   }
 }
 
-mud.ongoahead = () => {
-  postMessage({type: "oob", value: "goahead"})
+mud.onreceive = (ev) => {
+  parser.parse(ev)
 }
 
-// Regular string data received.
-mud.onreceive = (ev) => {
-  postMessage({type: "line", value: reader.decode(ev)})
+mud.onmessage = (ev) => {
+  //postMessage(ev)
 };
 
 // Telnet event received.

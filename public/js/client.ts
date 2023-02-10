@@ -2,25 +2,23 @@
 import { t } from '@arrow-js/core';
 import Colors from 'ansicolor'
 
-type MudData = "line" | "oob"
-type Msg = {type: MudData; value: string;}
+import type { Mudline } from "./telnet_parser"
 
 const mud_display = document.querySelector("#main-window > pre")
 const mud_container = document.querySelector("#main-window")
 
-function receive(message: Msg) {
-
-  switch (message.type) {
+function receive(message: Mudline) {
+  switch (message.kind) {
       case "line":
         // to clean any missed oob chars, esp whatever runs on password prompt
-        const cleaned = message.value.replace("�", "")
-        const colored = Colors.parse(message.value)
+        const colored = Colors.parse(message.payload)
         var insert = t`${colored.spans.map(
                         span => t`<span style='${span.css}'>${span.text}</span>`
                     )}`
         break
-      case "oob":
-        var insert = t`<span> GA </span>`
+      case "gmcp_data":
+        console.log("gmcp: ", message.payload)
+        var insert = t`<span> GMCP: ${message.payload} </span>`
         break
       default:
         console.error("unknown type")

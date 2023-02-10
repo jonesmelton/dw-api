@@ -1,91 +1,99 @@
 import WST from "./vendor/wst"
-import * as StateMachine from "pastafarian"
 
-function errorHandler(error, prev, next /* ...params */) {
-  if (error.name === 'IllegalTransitionException') {
-    console.log(error.message, "prev: ", prev, "next: ", next);
-      console.log(Date.now())
-    // prev is fsm.current
-    // next is the transition attempted, eg. fsm.go(next, ...)
-    // params are any other parameters to fsm.go, eg. fsm.go(next, param1, param2 ...)
-  } else {
-      console.log(`err: ${error} while trans from ${prev} to ${next}`)
-    // error is whatever was thrown in the transition callback that caused the error
-    // prev, next and other arguments will be undefined
-  }
+type State = "text" | "gmcp"
+
+type DataType = "line" | "gmcp_data"
+
+export type Mudline = {
+    kind: DataType;
+    payload: string;
+}
+
+function e(current: State, attempted: State): Error {
+    return new Error(`attempted illegal transition from ${current} to ${attempted}`)
 }
 
 export class TP {
-    cursor = 0;
-    accum: number[] = [];
-    chunk: number[] = [];
-    fsm: StateMachine;
-    constructor() {
-        const fsm = new StateMachine({
-            initial: "IDLE",
-            states: {
-                IDLE: ["START"],
-                START: ["TEXT", "DATA"],
-                TEXT: ["DATA", "START", "IDLE"],
-                DATA: ["START", "IDLE"]
-            },
-            error: errorHandler
-        })
+    private cursor = 0;
+    private acc_text: string = "";
+    private acc_gmcp: string = "";
+    private chunk: number[] = [];
+    private state: State = "text";
+    public message_handler: (mudline: Mudline) => void = (mudline) => {};
 
-        fsm.on("START", (_prev) => {
-            if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
-                this.cursor++
-                return this.fsm.go("DATA")
-            } else {
-                return this.fsm.go("TEXT")
-            }
-        })
-
-        fsm.on("DATA", (_prev) => {
-            for (; this.cursor < this.chunk.length; this.cursor++) {
-                if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
-                    this.cursor++
-                    this.fsm.go("START")
-                    break
-                } else {
-                    this.accum.push(this.chunk[this.cursor])
-                }
-            }
-            return this.fsm.go("IDLE")
-        })
-
-        fsm.on("after:DATA", (_prev) => {
-            console.log("DATA result: ", this.accum)
-            this.accum = []
-        })
-
-        fsm.on("TEXT", (_prev) => {
-            for (; this.cursor < this.chunk.length; this.cursor++) {
-                if (this.chunk[this.cursor] === WST.TelnetNegotiation.IAC) {
-                    this.cursor++
-                    this.fsm.go("DATA")
-                    break
-                } else {
-                    this.accum.push(this.chunk[this.cursor])
-                }
-            }
-            this.fsm.go("IDLE")
-        })
-
-        fsm.on("after:TEXT", (_prev) => {
-            console.log("TEXT result: ", this.accum)
-            this.accum = []
-        })
-
-        fsm.on("*", (prev, next) => {
-            console.log(`transition ${prev} -> ${next}\ncur: ${this.cursor} acc: ${this.accum}\nts: ${Date.now()}`)
-        })
-
-        this.fsm = fsm
+    constructor(emitter) {
+        this.message_handler = emitter
     }
-    parse(chars: number[]): void {
+
+    private current(): number {
+        return this.chunk[this.cursor]
+    }
+
+    parse(chars: Uint8Array): void {
         this.cursor = 0
-        this.chunk = chars
-        this.fsm.go("START")
+        this.chunk = Array.from(chars)
+        this.acc_text = ""
+        this.acc_gmcp = ""
+
+        for (; this.cursor < this.chunk.length; this.cursor++) {
+            // begin gmcp
+            if (this.current() === WST.TelnetNegotiation.IAC &&
+                this.chunk?.[this.cursor + 1] === WST.TelnetNegotiation.SB &&
+                this.chunk?.[this.cursor + 2] === WST.TelnetOption.GMCP) {
+
+                this.record_all = true
+
+                this.cursor += 3
+                this.state = "gmcp"
+            }
+
+            // end gmcp
+            if (this.state === "gmcp" &&
+                this.current() === WST.TelnetNegotiation.IAC &&
+                this.chunk?.[this.cursor + 1] === WST.TelnetNegotiation.SE) {
+                console.log("emit gmcp")
+                this.cursor = this.cursor + 2
+                this.emit_gmcp(this.acc_gmcp)
+                this.state = "text"
+            }
+
+            if (this.cursor < this.chunk.length) {
+                this.gather()
+            }
+
+        }
+
+        this.emit_text()
+    }
+
+    private gather(): void {
+
+        if (this.state === "text") {
+            const char = String.fromCharCode(this.current())
+            this.acc_text += char
+        }
+
+        if (this.state === "gmcp") {
+            const char = String.fromCharCode(this.current())
+            this.acc_gmcp += char
+        }
+    }
+
+    private emit_gmcp(gmcp: string): Mudline {
+        const line = {
+            kind: <const> "gmcp_data",
+            payload: gmcp
+        }
+        this.message_handler(line)
+        return line
+    }
+
+    private emit_text(): Mudline {
+        const line = {
+            kind: <const> "line",
+            payload: this.acc_text
+        }
+        this.message_handler(line)
+        return line
     }
 }
