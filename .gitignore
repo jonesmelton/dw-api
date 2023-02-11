@@ -1,6 +1,6 @@
 build/
 dist/
-lib/*
+lib/
 node_modules/
 .parcel-cache/
 *.db-shm
