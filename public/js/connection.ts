@@ -3,7 +3,10 @@
 import WST from "./vendor/wst"
 import {parse} from "./Telnet.bs"
 
-const test = [40, 50, 255, 250, 201, 33, 35, 255, 240, 65, 106]
+// text: "(2Aj", gmcp: "!#"
+const test = [40, 50, 255, 250, 201, 33, 35, 255, 240, 65, 106, 80, 80, 255, 250, 201, 41, 88, 95, 112, 255, 240, 32, 38]
+//             (   2  beg gmcp        !   #  end gmcp   A    j   P   P    beg gmcp      )   X   _    p  end gmcp  spc  &
+
 const res = parse(test)
 
 console.log("result: ", res)
