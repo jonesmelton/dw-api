@@ -20,9 +20,16 @@ export class TP {
     private chunk: number[] = [];
     private state: State = "text";
     public message_handler: (mudline: Mudline) => void = (mudline) => {};
+    private debug: boolean = false;
+    private acc_dbg: string = "";
+    private dbg_rec: boolean = false;
 
-    constructor(emitter) {
+    constructor(emitter, options?: Record<string, any>) {
         this.message_handler = emitter
+
+        if (options?.debug) {
+            this.debug = true
+        }
     }
 
     private current(): number {
@@ -30,18 +37,36 @@ export class TP {
     }
 
     parse(chars: Uint8Array): void {
+        console.log("debug? ", this.debug)
+
         this.cursor = 0
         this.chunk = Array.from(chars)
         this.acc_text = ""
         this.acc_gmcp = ""
+
+        if (this.debug) {
+            for (; this.cursor < this.chunk.length; this.cursor++) {
+                if (this.current() === 255) {this.dbg_rec = true}
+                if (this.dbg_rec) {
+                    const esc = WST.TelnetNegotiation[this.current()] || WST.TelnetOption[this.current()]
+                    if (esc) {
+                        this.acc_dbg += esc
+                        this.acc_dbg += " "
+                        this.acc_dbg += String.fromCharCode(this.current())
+                    }
+
+                }
+
+            }
+            this.cursor = 0
+            console.log(this.acc_dbg)
+        }
 
         for (; this.cursor < this.chunk.length; this.cursor++) {
             // begin gmcp
             if (this.current() === WST.TelnetNegotiation.IAC &&
                 this.chunk?.[this.cursor + 1] === WST.TelnetNegotiation.SB &&
                 this.chunk?.[this.cursor + 2] === WST.TelnetOption.GMCP) {
-
-                this.record_all = true
 
                 this.cursor += 3
                 this.state = "gmcp"
@@ -51,7 +76,8 @@ export class TP {
             if (this.state === "gmcp" &&
                 this.current() === WST.TelnetNegotiation.IAC &&
                 this.chunk?.[this.cursor + 1] === WST.TelnetNegotiation.SE) {
-                console.log("emit gmcp")
+
+
                 this.cursor = this.cursor + 2
                 this.emit_gmcp(this.acc_gmcp)
                 this.state = "text"

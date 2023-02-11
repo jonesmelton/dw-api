@@ -1,45 +1,48 @@
 "use strict";
 
 import WST from "./vendor/wst"
-import {TP} from "./telnet_parser"
+import {parse} from "./Telnet.bs"
 
-const parser = new TP(ln => {
-  console.log("line handler: ", ln)
-  postMessage(ln)
-})
-// parser.parse([100, 45, 255, 250, 201, 72, 73, 255, 240])
-// console.log(parser)
+const test = [40, 50, 255, 250, 201, 33, 35, 255, 240, 65, 106]
+const res = parse(test)
 
-const host = "ws://discworld.atuin.net:4243"
-const mud = new WST(host)
+console.log("result: ", res)
+// const parser = new TP(ln => {
+//   console.log("line handler: ", ln)
+//   postMessage(ln)
+// }, {debug: false})
 
-const reader = new TextDecoder()
 
-mud.onopen = () => {
-  console.log("connected")
+// const host = "ws://discworld.atuin.net:4243"
+// const mud = new WST(host)
 
-  self.onmessage = (ev: MessageEvent)=> {
-    mud.send(ev.data + "\n")
-  }
-}
+// const reader = new TextDecoder()
 
-mud.onwill = option => {
-  if (option === WST.TelnetOption.GMCP) {
-    mud.do(WST.TelnetOption.GMCP);
-    mud.sendGMCP("Core.Hello", { client: "ws-telnet-client/lore", version: "1.0.0" });
-    mud.sendGMCP("core.supports.set", [ "char.login", "char.info", "char.vitals", "char.login", "room.info", "room.map", "room.writtenmap"])
-  }
-}
+// mud.onopen = () => {
+//   console.log("connected")
 
-mud.onreceive = (ev) => {
-  parser.parse(ev)
-}
+//   self.onmessage = (ev: MessageEvent)=> {
+//     mud.send(ev.data + "\n")
+//   }
+// }
 
-mud.onmessage = (ev) => {
-  //postMessage(ev)
-};
+// mud.onwill = option => {
+//   if (option === WST.TelnetOption.GMCP) {
+//     mud.do(WST.TelnetOption.GMCP);
+//     mud.sendGMCP("Core.Hello", { client: "ws-telnet-client/lore", version: "1.0.0" });
+//     mud.sendGMCP("core.supports.set", [ "char.login", "char.info", "char.vitals", "char.login", "room.info", "room.map", "room.writtenmap"])
+//   }
+// }
 
-// Telnet event received.
-mud.ontelnet = (ev) => {
-    //console.log(`[=TELNET EVENT=]\nCommand: ${ev.command}\nOption: ${ev.option}\nData?: ${ev.data}`);
-};
+// mud.onreceive = (ev) => {
+//   parser.parse(ev)
+// }
+
+// mud.onmessage = (ev) => {
+//   //postMessage(ev)
+// };
+
+// // Telnet event received.
+// mud.ontelnet = (ev) => {
+//     //console.log(`[=TELNET EVENT=]\nCommand: ${ev.command}\nOption: ${ev.option}\nData?: ${ev.data}`);
+// };

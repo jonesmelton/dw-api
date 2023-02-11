@@ -1,0 +1,13 @@
+rescript = 1
+rule astj
+  command = /Users/jones/Desktop/dw_mud_projects/dw-api/node_modules/rescript/darwinarm64/bsc.exe  -bs-v 10.1.2 -open Belt -absname -bs-ast -o $out $i
+o public/js/Telnet.ast : astj ../../public/js/Telnet.res
+rule deps
+  command = /Users/jones/Desktop/dw_mud_projects/dw-api/node_modules/rescript/darwinarm64/bsb_helper.exe -hash 324249d39e29d0ae659a3d5fbe1ff7fe $in
+  restat = 1
+o public/js/Telnet.d : deps public/js/Telnet.ast
+rule mij
+  command = /Users/jones/Desktop/dw_mud_projects/dw-api/node_modules/rescript/darwinarm64/bsc.exe -I public/maps -I public/css -I public/images -I public/js/vendor -I public/js -I public -open Belt  -bs-package-name dw-telnet-parse -bs-package-output es6:$in_d:.bs.js $i
+  dyndep = 1
+  restat = 1
+o public/js/Telnet.cmj public/js/Telnet.cmi ../../public/js/Telnet.bs.js : mij public/js/Telnet.ast
