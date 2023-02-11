@@ -4,7 +4,7 @@
   "description": "Discworld mud web client",
   "main": "public/js/client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "onchange --initial 'public/js/tests/*.test.bs.mjs' -- pta 'public/js/tests/*.test.bs.mjs'",
     "res:build": "rescript",
     "res:dev": "rescript build -w"
   },
@@ -23,5 +23,11 @@
     "ansicolor": "^1.1.100",
     "pastafarian": "^1.2.1",
     "rescript": "^10.1.2"
+  },
+  "devDependencies": {
+    "@dusty-phillips/rescript-zora": "^3.0.2",
+    "onchange": "^7.1.0",
+    "pta": "^1.2.0",
+    "zora": "^5.2.0"
   }
 }

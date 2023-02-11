@@ -1,5 +1,6 @@
 {
-  "name": "dw-telnet-parse",
+  "name": "dw-api",
+  "namespace": "dw-api",
   "sources": [
     {
       "dir": "public",
@@ -12,7 +13,7 @@
       "in-source": true
     }
   ],
-  "suffix": ".bs.js",
-  "bs-dependencies": [],
+  "suffix": ".bs.mjs",
+  "bs-dependencies": ["@dusty-phillips/rescript-zora"],
   "bsc-flags": ["-open Belt"]
 }

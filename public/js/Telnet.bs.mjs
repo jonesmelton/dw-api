@@ -101,10 +101,7 @@ function run(_chars, _start, _end, _acc) {
 }
 
 function parse(chars) {
-  return run(chars, 0, chars.length - 1 | 0, {
-              text: "",
-              data: []
-            });
+  return chars;
 }
 
 export {

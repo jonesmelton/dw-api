@@ -74,5 +74,6 @@ let rec run = (chars, start, end, acc) => {
 }
 
 let parse = (chars) => {
-  run(chars, 0, Array.length(chars) - 1, {text: "", data: []})
+  chars
+  //run(chars, 0, Array.length(chars) - 1, {text: "", data: []})
 }
