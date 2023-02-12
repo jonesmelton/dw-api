@@ -4,7 +4,7 @@
   "description": "Discworld mud web client",
   "main": "public/js/client.js",
   "scripts": {
-    "test": "onchange --initial 'public/js/tests/*.test.bs.mjs' -- pta 'public/js/tests/*.test.bs.mjs'",
+    "test": "onchange --initial 'js/tests/*.test.bs.mjs' -- pta 'js/tests/*.test.bs.mjs'",
     "res:build": "rescript",
     "res:dev": "rescript build -w"
   },

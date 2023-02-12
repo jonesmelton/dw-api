@@ -3,7 +3,7 @@
   "namespace": "dw-api",
   "sources": [
     {
-      "dir": "public",
+      "dir": "js",
       "subdirs": true
     }
   ],
