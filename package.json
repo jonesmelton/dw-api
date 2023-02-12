@@ -6,7 +6,8 @@
   "scripts": {
     "test": "onchange --initial 'js/tests/*.test.bs.mjs' -- pta 'js/tests/*.test.bs.mjs'",
     "res:build": "rescript",
-    "res:dev": "rescript build -w"
+    "res:dev": "rescript build -w",
+    "res:fmt": "rescript format js/*.res"
   },
   "repository": {
     "type": "git",
