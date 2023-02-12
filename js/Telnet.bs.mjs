@@ -2,7 +2,7 @@
 
 import * as Belt_List from "rescript/lib/es6/belt_List.js";
 
-function make_token(uint8) {
+function make(uint8) {
   if (uint8 >= 240) {
     if (uint8 === 250) {
       return {
@@ -67,7 +67,7 @@ function make_token(uint8) {
   }
 }
 
-function token_to_string(token) {
+function to_string(token) {
   switch (token.TAG | 0) {
     case /* Alphanum */0 :
         return token._0;
@@ -98,6 +98,11 @@ function token_to_string(token) {
     
   }
 }
+
+var Token = {
+  make: make,
+  to_string: to_string
+};
 
 function parse(ch, stream) {
   if (!stream) {
@@ -138,10 +143,13 @@ function run($$char, arr) {
   }
 }
 
+var Parser = {
+  parse: parse,
+  run: run
+};
+
 export {
-  make_token ,
-  token_to_string ,
-  parse ,
-  run ,
+  Token ,
+  Parser ,
 }
 /* No side effect */

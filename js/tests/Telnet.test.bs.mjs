@@ -5,56 +5,56 @@ import * as Zora$1 from "zora";
 import * as Telnet$DwApi from "../Telnet.bs.mjs";
 
 Zora$1.test("telopt tokenizer", (function (t) {
-        var iac = Telnet$DwApi.make_token(255);
+        var iac = Telnet$DwApi.Token.make(255);
         t.equal(iac, {
               TAG: /* Telopt */1,
               _0: /* IAC */0
             }, "converts int to Telopt");
-        t.equal(Telnet$DwApi.token_to_string(iac), "IAC", "converts Telopt to string");
+        t.equal(Telnet$DwApi.Token.to_string(iac), "IAC", "converts Telopt to string");
         return Zora.done(undefined);
       }));
 
 Zora$1.test("line feed tokenizer", (function (t) {
-        var lf = Telnet$DwApi.make_token(9);
+        var lf = Telnet$DwApi.Token.make(9);
         t.equal(lf, {
               TAG: /* Control */2,
               _0: /* LF */0
             }, "converts int to Control");
-        t.equal(Telnet$DwApi.token_to_string(lf), "LF", "converts Control to string");
+        t.equal(Telnet$DwApi.Token.to_string(lf), "LF", "converts Control to string");
         return Zora.done(undefined);
       }));
 
 Zora$1.test("ignorable tokenizer", (function (t) {
-        var one99 = Telnet$DwApi.make_token(199);
+        var one99 = Telnet$DwApi.Token.make(199);
         t.equal(one99, {
               TAG: /* Ignore */3,
               _0: 199
             }, "converts non-alphanum to Ignore");
-        t.equal(Telnet$DwApi.token_to_string(one99), "199", "converts non-alphanum to number");
+        t.equal(Telnet$DwApi.Token.to_string(one99), "199", "converts non-alphanum to number");
         return Zora.done(undefined);
       }));
 
 Zora$1.test("actual letter tokenizer", (function (t) {
-        var cap_F = Telnet$DwApi.make_token(70);
+        var cap_F = Telnet$DwApi.Token.make(70);
         t.equal(cap_F, {
               TAG: /* Alphanum */0,
               _0: "F"
             }, "converts letter to Alphanum");
-        t.equal(Telnet$DwApi.token_to_string(cap_F), "F", "converts Alphanum to string");
+        t.equal(Telnet$DwApi.Token.to_string(cap_F), "F", "converts Alphanum to string");
         return Zora.done(undefined);
       }));
 
 Zora$1.test("base cases", (function (t) {
-        var eof = Telnet$DwApi.run(1, []);
+        var eof = Telnet$DwApi.Parser.run(1, []);
         Zora.resultError(t, eof, "error result");
-        var single = Telnet$DwApi.run(1, [0]);
+        var single = Telnet$DwApi.Parser.run(1, [0]);
         Zora.resultOk(t, single, (function (t, expected) {
                 t.equal(expected, [
                       0,
                       /* [] */0
                     ], "single element");
               }));
-        var more = Telnet$DwApi.run(1, [
+        var more = Telnet$DwApi.Parser.run(1, [
               2,
               3,
               4
@@ -74,9 +74,12 @@ Zora$1.test("base cases", (function (t) {
         return Zora.done(undefined);
       }));
 
-var Tn;
+var Token;
+
+var Parser;
 
 export {
-  Tn ,
+  Token ,
+  Parser ,
 }
 /*  Not a pure module */
