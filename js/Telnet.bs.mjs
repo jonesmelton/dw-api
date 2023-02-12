@@ -24,21 +24,29 @@ function parse($$char, stream) {
             TAG: /* Ok */0,
             _0: [
               only,
-              /* [] */0
+              undefined
             ]
           };
   }
 }
 
 function run($$char, arr) {
-  var partial_arg = Belt_List.fromArray(arr);
-  return function (param) {
-    return parse(partial_arg, param);
-  };
+  if (arr.length === 0) {
+    return {
+            TAG: /* Error */1,
+            _0: "end of stream"
+          };
+  } else {
+    return parse($$char, Belt_List.fromArray(arr));
+  }
 }
 
+var Parser = {
+  parse: parse,
+  run: run
+};
+
 export {
-  parse ,
-  run ,
+  Parser ,
 }
 /* No side effect */

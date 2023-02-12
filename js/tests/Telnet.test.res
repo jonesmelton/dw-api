@@ -1,8 +1,16 @@
 open Zora
+module Telnet = Telnet.Parser
 
-zora("should run a test asynchronously", t => {
-  let input = [1, 2, 5]
-  let act = Telnet.run(1, input)
-  t->resultOk(Result.Ok((1, list{2, 5})), (t, msg) => t->equal(msg, (1, list{2, 5}), "result ok"))
+zora("base cases", t => {
+  let eof = Telnet.run(1, [])
+  t->resultError(eof, "error result")
+
+  let single = Telnet.run(1, [0])
+  t->resultOk(single, (t, expected) =>
+    t->equal(expected, (0, None), "single element"))
+
+  let more = Telnet.run(1, [2, 3, 4])
+  t->resultOk(more, (t, expected) =>
+    t->equal(expected, (2, Some(list{3, 4})), "multiple elements"))
   done()
 })

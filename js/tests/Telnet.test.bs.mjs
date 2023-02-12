@@ -4,41 +4,39 @@ import * as Zora from "@dusty-phillips/rescript-zora/src/Zora.bs.mjs";
 import * as Zora$1 from "zora";
 import * as Telnet$DwApi from "../Telnet.bs.mjs";
 
-Zora$1.test("should run a test asynchronously", (function (t) {
-        var input = [
-          1,
-          2,
-          5
-        ];
-        Telnet$DwApi.run(1, input);
-        Zora.resultOk(t, {
-              TAG: /* Ok */0,
-              _0: [
-                1,
-                {
-                  hd: 2,
-                  tl: {
-                    hd: 5,
-                    tl: /* [] */0
-                  }
-                }
-              ]
-            }, (function (t, msg) {
-                t.equal(msg, [
-                      1,
+Zora$1.test("base cases", (function (t) {
+        var eof = Telnet$DwApi.Parser.run(1, []);
+        Zora.resultError(t, eof, "error result");
+        var single = Telnet$DwApi.Parser.run(1, [0]);
+        Zora.resultOk(t, single, (function (t, expected) {
+                t.equal(expected, [
+                      0,
+                      undefined
+                    ], "single element");
+              }));
+        var more = Telnet$DwApi.Parser.run(1, [
+              2,
+              3,
+              4
+            ]);
+        Zora.resultOk(t, more, (function (t, expected) {
+                t.equal(expected, [
+                      2,
                       {
-                        hd: 2,
+                        hd: 3,
                         tl: {
-                          hd: 5,
+                          hd: 4,
                           tl: /* [] */0
                         }
                       }
-                    ], "result ok");
+                    ], "multiple elements");
               }));
         return Zora.done(undefined);
       }));
 
+var Telnet;
+
 export {
-  
+  Telnet ,
 }
 /*  Not a pure module */
