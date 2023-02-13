@@ -45,10 +45,15 @@ zora("actual letter tokenizer", t => {
 
 zora("single-char parser fn", t => {
   let p = Parser.pchar(70)
-  t->resultError(p(list{80}), "rejects unexpected")
-  t->resultOk(p(list{70}), (t, expected) => t->equal(expected, (70, list{}), "success single item"))
+  let one_bad = list{80}
+  let one_good = list{70}
+  let mult_bad = list{80, 0}
+  let mult_good = list{70, 0, 1}
 
-  t->resultOk(p(list{70, 0, 1}), (t, expected) => t->equal(expected, (70, list{0, 1}), "success mult item"))
-  t->resultError(p(list{80, 0}), "rejected unexpected")
+  t->resultError(Parser.run(p, one_bad), "rejects unexpected")
+  t->resultOk(Parser.run(p, one_good), (t, expected) => t->equal(expected, (70, list{}), "success single item"))
+
+  t->resultOk(Parser.run(p, mult_good), (t, expected) => t->equal(expected, (70, list{0, 1}), "success mult item"))
+  t->resultError(Parser.run(p, mult_bad), "rejected unexpected")
   done()
 })

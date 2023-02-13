@@ -45,11 +45,12 @@ Zora$1.test("actual letter tokenizer", (function (t) {
       }));
 
 Zora$1.test("single-char parser fn", (function (t) {
-        Zora.resultError(t, Telnet$DwApi.Parser.pchar(70, {
+        var p = Telnet$DwApi.Parser.pchar(70);
+        Zora.resultError(t, Telnet$DwApi.Parser.run(p, {
                   hd: 80,
                   tl: /* [] */0
                 }), "rejects unexpected");
-        Zora.resultOk(t, Telnet$DwApi.Parser.pchar(70, {
+        Zora.resultOk(t, Telnet$DwApi.Parser.run(p, {
                   hd: 70,
                   tl: /* [] */0
                 }), (function (t, expected) {
@@ -58,7 +59,7 @@ Zora$1.test("single-char parser fn", (function (t) {
                       /* [] */0
                     ], "success single item");
               }));
-        Zora.resultOk(t, Telnet$DwApi.Parser.pchar(70, {
+        Zora.resultOk(t, Telnet$DwApi.Parser.run(p, {
                   hd: 70,
                   tl: {
                     hd: 0,
@@ -79,7 +80,7 @@ Zora$1.test("single-char parser fn", (function (t) {
                       }
                     ], "success mult item");
               }));
-        Zora.resultError(t, Telnet$DwApi.Parser.pchar(70, {
+        Zora.resultError(t, Telnet$DwApi.Parser.run(p, {
                   hd: 80,
                   tl: {
                     hd: 0,

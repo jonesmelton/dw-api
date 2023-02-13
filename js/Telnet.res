@@ -54,12 +54,12 @@ module Token = {
 }
 
 module Parser = {
-  type streamchar = int
-  type stream = list<streamchar>
-  type outcome = Result.t<((streamchar, stream)), string>
+  type stream = list<int>
+  type outcome<'a> = Result.t<(('a, stream)), string>
+  type t<'a> = Parser(stream => outcome<'a>)
 
-  let pchar = (target: streamchar, chars: stream): outcome => {
-    switch chars {
+  let pchar = (target) => {
+    let handle = chars => {switch chars {
     | list{} => Error("end of stream")
     | list{only} => only === target ? Ok((only, list{})) : Error("unexpected char")
     | list{ch, ...remaining} =>
@@ -68,6 +68,14 @@ module Parser = {
       } else {
         Error(j`unexpected char -- expected: target, got: ch`)
       }
-    }
+    }}
+    Parser(handle)
   }
+
+  let run = (t, input) => {
+    let Parser(r) = t
+
+    r(input)
+  }
+
 }
