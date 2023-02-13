@@ -53,29 +53,53 @@ module Token = {
   }
 }
 
-module Parser = {
+module Parser: {
+  type t<'a>
   type stream = list<int>
-  type outcome<'a> = Result.t<(('a, stream)), string>
-  type t<'a> = Parser(stream => outcome<'a>)
+  type outcome<'a> = Result.t<('a, stream), string>
+  type parser<'a> = Parser(stream => outcome<'a>)
+  let pchar: int => parser<int>
+  let run: (parser<'a>, stream) => outcome<'a>
+} = {
+  type stream = list<int>
+  type outcome<'a> = Result.t<('a, stream), string>
+  type parser<'a> = Parser(stream => outcome<'a>)
+  type t<'a> = parser<'a>
 
-  let pchar = (target) => {
-    let handle = chars => {switch chars {
-    | list{} => Error("end of stream")
-    | list{only} => only === target ? Ok((only, list{})) : Error("unexpected char")
-    | list{ch, ...remaining} =>
-      if ch === target {
-        Ok((ch, remaining))
-      } else {
-        Error(j`unexpected char -- expected: target, got: ch`)
+  let pchar = target => {
+    let handle = chars => {
+      switch chars {
+      | list{} => Error("end of stream")
+      | list{only} => only === target ? Ok((only, list{})) : Error("unexpected char")
+      | list{ch, ...remaining} =>
+        if ch === target {
+          Ok((ch, remaining))
+        } else {
+          Error(j`unexpected char -- expected: target, got: ch`)
+        }
       }
-    }}
+    }
     Parser(handle)
   }
 
   let run = (t, input) => {
     let Parser(r) = t
-
     r(input)
   }
 
+  let bind = (t, fn) => Parser(
+    input =>
+      switch run(t, input) {
+      | Error(msg) => Error(msg)
+      | Ok((value, remaining)) => value->fn->run(remaining)
+      },
+  )
+
+  let return = x => {
+    Parser(input => Ok((x, input)))
+  }
+
+  let map = (t, fn) => {
+    t->bind(x => x->fn->return)
+  }
 }

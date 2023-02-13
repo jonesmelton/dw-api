@@ -17,6 +17,6 @@
   "bs-dependencies": ["@dusty-phillips/rescript-zora"],
   "bsc-flags": ["-open Belt"],
   "warnings": {
-    "error": "+8"
+    "error": "+8+101+56"
   }
 }
