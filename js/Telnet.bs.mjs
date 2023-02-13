@@ -103,46 +103,44 @@ var Token = {
   to_string: to_string
 };
 
-function pchar(target, stream) {
-  if (!stream) {
+function pchar(target, chars) {
+  if (!chars) {
     return {
             TAG: /* Error */1,
             _0: "end of stream"
           };
   }
-  var remaining = stream.tl;
-  var only = stream.hd;
-  if (!remaining) {
+  var remaining = chars.tl;
+  var only = chars.hd;
+  if (remaining) {
     if (only === target) {
       return {
               TAG: /* Ok */0,
               _0: [
                 only,
-                /* [] */0
+                remaining
               ]
             };
     } else {
       return {
               TAG: /* Error */1,
-              _0: "unexpected char"
+              _0: "unexpected char -- expected: target, got: ch"
             };
     }
-  }
-  if (only === target) {
+  } else if (only === target) {
     return {
             TAG: /* Ok */0,
             _0: [
               only,
-              remaining
+              /* [] */0
             ]
           };
+  } else {
+    return {
+            TAG: /* Error */1,
+            _0: "unexpected char"
+          };
   }
-  var lost = String(target);
-  var found = String(only);
-  return {
-          TAG: /* Error */1,
-          _0: "unexpected char -- expected: " + lost + ", got " + found + ""
-        };
 }
 
 var Parser = {

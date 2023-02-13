@@ -45,7 +45,6 @@ zora("actual letter tokenizer", t => {
 
 zora("single-char parser fn", t => {
   let p = Parser.pchar(70)
-  let incorrect_single =
   t->resultError(p(list{80}), "rejects unexpected")
   t->resultOk(p(list{70}), (t, expected) => t->equal(expected, (70, list{}), "success single item"))
 

@@ -54,22 +54,19 @@ module Token = {
 }
 
 module Parser = {
-  type state = {
-    remaining: list<int>,
-    location: int,
-  }
+  type streamchar = int
+  type stream = list<streamchar>
+  type outcome = Result.t<((streamchar, stream)), string>
 
-  let pchar = (target, stream) => {
-    switch stream {
+  let pchar = (target: streamchar, chars: stream): outcome => {
+    switch chars {
     | list{} => Error("end of stream")
     | list{only} => only === target ? Ok((only, list{})) : Error("unexpected char")
     | list{ch, ...remaining} =>
       if ch === target {
         Ok((ch, remaining))
       } else {
-        let lost = Int.toString(target)
-        let found = Int.toString(ch)
-        Error(`unexpected char -- expected: ${lost}, got ${found}`)
+        Error(j`unexpected char -- expected: target, got: ch`)
       }
     }
   }
