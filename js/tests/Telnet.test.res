@@ -43,14 +43,13 @@ zora("actual letter tokenizer", t => {
   done()
 })
 
-zora("base cases", t => {
-  let eof = Parser.run([])
-  t->resultError(eof, "error result")
+zora("single-char parser fn", t => {
+  let p = Parser.pchar(70)
+  let incorrect_single =
+  t->resultError(p(list{80}), "rejects unexpected")
+  t->resultOk(p(list{70}), (t, expected) => t->equal(expected, (70, list{}), "success single item"))
 
-  let single = Parser.run([0])
-  t->resultOk(single, (t, expected) => t->equal(expected, (0, list{}), "single element"))
-
-  let more = Parser.run([2, 3, 4])
-  t->resultOk(more, (t, expected) => t->equal(expected, (2, list{3, 4}), "multiple elements"))
+  t->resultOk(p(list{70, 0, 1}), (t, expected) => t->equal(expected, (70, list{0, 1}), "success mult item"))
+  t->resultError(p(list{80, 0}), "rejected unexpected")
   done()
 })

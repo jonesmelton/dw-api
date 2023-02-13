@@ -54,40 +54,23 @@ module Token = {
 }
 
 module Parser = {
-  type the_move =
-    | Eat(string)
-    | Skip(int)
-    | Nothing
-
   type state = {
     remaining: list<int>,
     location: int,
   }
 
-  let check_one = (ch, remaining) => {
-    let peek = (list{hd, ...tl}) => Token.make(hd)
-    let action = switch Token.make(ch) {
-    | Alphanum(c) => Eat(c)
-    | Control(_) => Skip(1)
-    | Ignore(_) => Skip(1)
-    | Telopt(IAC) => Skip(2)
-    | Telopt(_) => Skip(1)
-    }
-  }
-
-  let parse = stream => {
+  let pchar = (target, stream) => {
     switch stream {
     | list{} => Error("end of stream")
-    | list{only} => Ok((only, list{}))
-    | list{head, ...tail} => Ok((head, tail))
-    }
-  }
-
-  let run = arr => {
-    if Array.length(arr) == 0 {
-      Result.Error("empty array")
-    } else {
-      parse(List.fromArray(arr))
+    | list{only} => only === target ? Ok((only, list{})) : Error("unexpected char")
+    | list{ch, ...remaining} =>
+      if ch === target {
+        Ok((ch, remaining))
+      } else {
+        let lost = Int.toString(target)
+        let found = Int.toString(ch)
+        Error(`unexpected char -- expected: ${lost}, got ${found}`)
+      }
     }
   }
 }

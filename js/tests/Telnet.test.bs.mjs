@@ -44,33 +44,48 @@ Zora$1.test("actual letter tokenizer", (function (t) {
         return Zora.done(undefined);
       }));
 
-Zora$1.test("base cases", (function (t) {
-        var eof = Telnet$DwApi.Parser.run([]);
-        Zora.resultError(t, eof, "error result");
-        var single = Telnet$DwApi.Parser.run([0]);
-        Zora.resultOk(t, single, (function (t, expected) {
+Zora$1.test("single-char parser fn", (function (t) {
+        Zora.resultError(t, Telnet$DwApi.Parser.pchar(70, {
+                  hd: 80,
+                  tl: /* [] */0
+                }), "rejects unexpected");
+        Zora.resultOk(t, Telnet$DwApi.Parser.pchar(70, {
+                  hd: 70,
+                  tl: /* [] */0
+                }), (function (t, expected) {
                 t.equal(expected, [
-                      0,
+                      70,
                       /* [] */0
-                    ], "single element");
+                    ], "success single item");
               }));
-        var more = Telnet$DwApi.Parser.run([
-              2,
-              3,
-              4
-            ]);
-        Zora.resultOk(t, more, (function (t, expected) {
+        Zora.resultOk(t, Telnet$DwApi.Parser.pchar(70, {
+                  hd: 70,
+                  tl: {
+                    hd: 0,
+                    tl: {
+                      hd: 1,
+                      tl: /* [] */0
+                    }
+                  }
+                }), (function (t, expected) {
                 t.equal(expected, [
-                      2,
+                      70,
                       {
-                        hd: 3,
+                        hd: 0,
                         tl: {
-                          hd: 4,
+                          hd: 1,
                           tl: /* [] */0
                         }
                       }
-                    ], "multiple elements");
+                    ], "success mult item");
               }));
+        Zora.resultError(t, Telnet$DwApi.Parser.pchar(70, {
+                  hd: 80,
+                  tl: {
+                    hd: 0,
+                    tl: /* [] */0
+                  }
+                }), "rejected unexpected");
         return Zora.done(undefined);
       }));
 
