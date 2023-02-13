@@ -44,13 +44,13 @@ zora("actual letter tokenizer", t => {
 })
 
 zora("base cases", t => {
-  let eof = Parser.run(1, [])
+  let eof = Parser.run([])
   t->resultError(eof, "error result")
 
-  let single = Parser.run(1, [0])
+  let single = Parser.run([0])
   t->resultOk(single, (t, expected) => t->equal(expected, (0, list{}), "single element"))
 
-  let more = Parser.run(1, [2, 3, 4])
+  let more = Parser.run([2, 3, 4])
   t->resultOk(more, (t, expected) => t->equal(expected, (2, list{3, 4}), "multiple elements"))
   done()
 })

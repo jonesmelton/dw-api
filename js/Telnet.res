@@ -54,19 +54,40 @@ module Token = {
 }
 
 module Parser = {
-  let parse = (ch, stream) => {
-    switch stream {
-    | list{} => Result.Error("end of stream")
-    | list{only} => Result.Ok((only, list{}))
-    | list{head, ...tail} => Result.Ok((head, tail))
+  type the_move =
+    | Eat(string)
+    | Skip(int)
+    | Nothing
+
+  type state = {
+    remaining: list<int>,
+    location: int,
+  }
+
+  let check_one = (ch, remaining) => {
+    let peek = (list{hd, ...tl}) => Token.make(hd)
+    let action = switch Token.make(ch) {
+    | Alphanum(c) => Eat(c)
+    | Control(_) => Skip(1)
+    | Ignore(_) => Skip(1)
+    | Telopt(IAC) => Skip(2)
+    | Telopt(_) => Skip(1)
     }
   }
 
-  let run = (char, arr) => {
+  let parse = stream => {
+    switch stream {
+    | list{} => Error("end of stream")
+    | list{only} => Ok((only, list{}))
+    | list{head, ...tail} => Ok((head, tail))
+    }
+  }
+
+  let run = arr => {
     if Array.length(arr) == 0 {
       Result.Error("empty array")
     } else {
-      parse(char, List.fromArray(arr))
+      parse(List.fromArray(arr))
     }
   }
 }

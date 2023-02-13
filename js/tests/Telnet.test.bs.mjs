@@ -45,16 +45,16 @@ Zora$1.test("actual letter tokenizer", (function (t) {
       }));
 
 Zora$1.test("base cases", (function (t) {
-        var eof = Telnet$DwApi.Parser.run(1, []);
+        var eof = Telnet$DwApi.Parser.run([]);
         Zora.resultError(t, eof, "error result");
-        var single = Telnet$DwApi.Parser.run(1, [0]);
+        var single = Telnet$DwApi.Parser.run([0]);
         Zora.resultOk(t, single, (function (t, expected) {
                 t.equal(expected, [
                       0,
                       /* [] */0
                     ], "single element");
               }));
-        var more = Telnet$DwApi.Parser.run(1, [
+        var more = Telnet$DwApi.Parser.run([
               2,
               3,
               4

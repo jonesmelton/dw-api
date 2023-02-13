@@ -104,7 +104,24 @@ var Token = {
   to_string: to_string
 };
 
-function parse(ch, stream) {
+function check_one(ch, remaining) {
+  var c = make(ch);
+  switch (c.TAG | 0) {
+    case /* Alphanum */0 :
+        break;
+    case /* Telopt */1 :
+        if (c._0 !== 0) {
+          
+        }
+        break;
+    case /* Control */2 :
+    case /* Ignore */3 :
+        break;
+    
+  }
+}
+
+function parse(stream) {
   if (!stream) {
     return {
             TAG: /* Error */1,
@@ -132,18 +149,19 @@ function parse(ch, stream) {
   }
 }
 
-function run($$char, arr) {
+function run(arr) {
   if (arr.length === 0) {
     return {
             TAG: /* Error */1,
             _0: "empty array"
           };
   } else {
-    return parse($$char, Belt_List.fromArray(arr));
+    return parse(Belt_List.fromArray(arr));
   }
 }
 
 var Parser = {
+  check_one: check_one,
   parse: parse,
   run: run
 };
