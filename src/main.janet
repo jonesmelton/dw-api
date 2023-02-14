@@ -2,7 +2,6 @@
 (import suresql :as sure)
 (import ./fly)
 (import ./items)
-(import ./client)
 
 (defn app-layout [{:body body :request request}]
   (joy/text/html
@@ -13,16 +12,10 @@
       [:meta {:charset "utf-8"}]
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
       [:meta {:name "csrf-token" :content (joy/csrf-token-value request)}]
-      (when (not= (request :path) "/client")
-        [:link {:href "/css/main.css" :rel "stylesheet"}])
-      [:script {:src "/js/vendor/hyperscript.js" :defer ""}]
-      [:script {:src "/js/vendor/htmx.min.js" :defer ""}]
-      [:script {:src "/js/app.js" :defer ""}]
-      (when (= (request :path) "/client")
-        [[:link {:href "/css/client.css" :rel "stylesheet"}]
-         [:script {:src "/js/vendor/ansicolor.js" :type "module" :defer ""}]
-         [:script {:src "https://cdn.skypack.dev/@arrow-js/core" :type "module" :defer ""}]
-         [:script {:src "/js/client.js" :type "module" :defer ""}]])]
+      [:link {:href "/css/main.css" :rel "stylesheet"}]
+      [:script {:src "/js/hyperscript.js" :defer ""}]
+      [:script {:src "/js/htmx.min.js" :defer ""}]
+      [:script {:src "/js/app.js" :defer ""}]]
      [:body body]]))
 
 (import spork/json :as json)
@@ -39,8 +32,7 @@
                [:get "/npcs/fly" fly/handle-search]
                [:get "/items" items/search-field]
                [:get "/items/search" items/search]
-               [:get "/rooms/:id" items/maps-by-id]
-               [:get "/client" client/index])
+               [:get "/rooms/:id" items/maps-by-id])
 
 (def app (-> (joy/handler app-routes)
              (joy/layout app-layout)

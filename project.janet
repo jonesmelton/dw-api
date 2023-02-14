@@ -37,9 +37,6 @@
 (task "docker:shell" []
       (os/shell "docker exec -it dw-api bash"))
 
-(task "mudclient:run" []
-      (os/shell "npx parcel public/client.html"))
-
 (declare-executable
   :name "serve"
   :entry "src/main.janet")
