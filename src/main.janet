@@ -13,8 +13,10 @@
       [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
       [:meta {:name "csrf-token" :content (joy/csrf-token-value request)}]
       [:link {:href "/css/main.css" :rel "stylesheet"}]
-      [:script {:src "/js/hyperscript.js" :defer ""}]
-      [:script {:src "/js/htmx.min.js" :defer ""}]
+      [:script {:src "https://unpkg.com/hyperscript.org@0.9.7"}]
+      [:script {:src "https://unpkg.com/htmx.org@1.8.5"
+               :integrity "sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
+               :crossorigin "anonymous"}]
       [:script {:src "/js/app.js" :defer ""}]]
      [:body body]]))
 
